@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "392819544548-vbbsc5qpcgvbtpsqqkhidbve93l0hk7u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dreamteam.pthfndr",
+            "certificate_hash": "2f46d9b747a2bc2d087bba7b65ba188026a65f32"
+          }
+        },
+        {
           "client_id": "392819544548-t2dda6aos0afkql810aeneqq9c83fr7t.apps.googleusercontent.com",
           "client_type": 3
         }
