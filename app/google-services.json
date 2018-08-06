@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "392819544548",
+    "firebase_url": "https://pthfndr-4d8a8.firebaseio.com",
+    "project_id": "pthfndr-4d8a8",
+    "storage_bucket": "pthfndr-4d8a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392819544548:android:4ec44de1b8a6336a",
+        "android_client_info": {
+          "package_name": "dreamteam.pthfndr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "392819544548-40gnhvsvsbu7t8cn8pqpbnr19sccdc90.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dreamteam.pthfndr",
+            "certificate_hash": "62e598745ea5d2a812a513398da8ad1bd9068388"
+          }
+        },
+        {
+          "client_id": "392819544548-vbbsc5qpcgvbtpsqqkhidbve93l0hk7u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dreamteam.pthfndr",
+            "certificate_hash": "2f46d9b747a2bc2d087bba7b65ba188026a65f32"
+          }
+        },
+        {
+          "client_id": "392819544548-t2dda6aos0afkql810aeneqq9c83fr7t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6t8quWWQu41vB5skNwo4gePvVA1N7l3A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392819544548-t2dda6aos0afkql810aeneqq9c83fr7t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
