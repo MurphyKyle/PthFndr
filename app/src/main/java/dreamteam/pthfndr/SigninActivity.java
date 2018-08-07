@@ -45,10 +45,11 @@ public class SigninActivity extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-                FirebaseDatabase fDB = FirebaseDatabase.getInstance();
-                DatabaseReference fRef = fDB.getReference("test");
-                fRef.setValue("Hello, World!");
+
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                FirebaseDatabase fDB = FirebaseDatabase.getInstance();
+                DatabaseReference fRef = fDB.getReference("users");
+                fRef.setValue("dkfdjf");
                 Intent i = new Intent(this, MapsActivity.class);
                 startActivity(i);
             } else {
