@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">PthFndr</string>
     <string name="title_activity_maps">Map</string>
+    <string name="lbl_average_speed">Average Speed:</string>
+    <string name="lbl_distance">Distance:</string>
+    <string name="lbl_time">Total Time:</string>
+    <string name="lbl_date">Date:</string>
+    <string name="lbl_max_speed">Max Speed:</string>
+    <string name="btn_view_map">View Map</string>
 </resources>
