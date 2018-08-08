@@ -7,4 +7,6 @@
     <string name="lbl_date">Date:</string>
     <string name="lbl_max_speed">Max Speed:</string>
     <string name="btn_view_map">View Map</string>
+    <string name="signout">Sign Out</string>
+    <string name="signin">Sign In</string>
 </resources>
