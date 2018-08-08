@@ -3,11 +3,7 @@ package dreamteam.pthfndr;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-<<<<<<< HEAD
-=======
 import android.widget.Toast;
-
->>>>>>> 646fcfb493c6064cc6cc6da03494faaf036c718b
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
