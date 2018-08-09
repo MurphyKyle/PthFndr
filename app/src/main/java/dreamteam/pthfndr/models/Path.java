@@ -6,20 +6,51 @@ import android.location.Location;
 import com.google.android.gms.maps.model.Polyline;
 
 public class Path {
-    Location endLocation;
-    Polyline pl;
-    Color color;
-    int seconds;
+    private Location endLocation;
+    private Polyline pl;
+    private Color color;
+    private int seconds;
 
     public Path(Location sl, Location el, Polyline p, Color c, int timePassed){
-        endLocation = el;
-        pl = p;
-        color = c;
-        seconds = timePassed;
+        setEndLocation(el);
+        setPl(p);
+        setColor(c);
+        setSeconds(timePassed);
     }
 
     public float get_speed(){
-        return endLocation.getSpeed() * 3.6F;
+        return getEndLocation().getSpeed() * 3.6F;
     }
 
+    public Location getEndLocation() {
+        return endLocation;
+    }
+
+    public void setEndLocation(Location endLocation) {
+        this.endLocation = endLocation;
+    }
+
+    public Polyline getPl() {
+        return pl;
+    }
+
+    public void setPl(Polyline pl) {
+        this.pl = pl;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public int getSeconds() {
+        return seconds;
+    }
+
+    public void setSeconds(int seconds) {
+        this.seconds = seconds;
+    }
 }

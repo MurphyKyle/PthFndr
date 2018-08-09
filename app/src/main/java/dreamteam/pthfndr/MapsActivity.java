@@ -1,8 +1,17 @@
 package dreamteam.pthfndr;
 
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,9 +44,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
 
         // Add a marker in Salt Lake City and move the camera
-        LatLng saltLake = new LatLng(40.76, 111.89);
+        LatLng saltLake = new LatLng(40.76, -111.89);
         mMap.addMarker(new MarkerOptions().position(saltLake).title("Marker in Salt Lake City"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(saltLake));
     }
