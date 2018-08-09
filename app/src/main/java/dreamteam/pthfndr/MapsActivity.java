@@ -1,6 +1,7 @@
 package dreamteam.pthfndr;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -51,10 +52,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void signOut(View view) {
-        AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
-            public void onComplete(@NonNull Task<Void> task) {
-                finish();
-            }
-        });
+        Intent i = new Intent(this, ProfileActivity.class);
+        startActivity(i);
+
     }
 }
