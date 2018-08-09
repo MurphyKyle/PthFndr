@@ -1,8 +1,12 @@
 package dreamteam.pthfndr.models;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.util.ArrayList;
 import java.util.Date;
 
+@IgnoreExtraProperties
 public class Trip {
     private ArrayList<Path> paths = new ArrayList<>();
     private double averageSpeed;
@@ -17,6 +21,7 @@ public class Trip {
         this.setUserID(userID);
         settStart(System.currentTimeMillis());
         setDate(startDate);
+
     }
 
     public void end_trip(){

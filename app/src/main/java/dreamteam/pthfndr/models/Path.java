@@ -4,7 +4,9 @@ import android.graphics.Color;
 import android.location.Location;
 
 import com.google.android.gms.maps.model.Polyline;
+import com.google.firebase.database.IgnoreExtraProperties;
 
+@IgnoreExtraProperties
 public class Path {
     private Location endLocation;
     private Polyline pl;
