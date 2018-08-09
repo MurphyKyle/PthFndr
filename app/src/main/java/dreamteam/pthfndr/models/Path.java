@@ -13,14 +13,14 @@ public class Path {
     private Color color;
     private int seconds;
 
-    public Path(Location sl, Location el, Polyline p, Color c, int timePassed){
+    public Path(Location sl, Location el, Polyline p, Color c, int timePassed) {
         setEndLocation(el);
         setPl(p);
         setColor(c);
         setSeconds(timePassed);
     }
 
-    public float get_speed(){
+    public float get_speed() {
         return getEndLocation().getSpeed() * 3.6F;
     }
 

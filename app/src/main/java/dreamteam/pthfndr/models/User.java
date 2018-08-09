@@ -1,7 +1,10 @@
 package dreamteam.pthfndr.models;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.util.ArrayList;
 
+@IgnoreExtraProperties
 public class User {
 
     private String Name;

@@ -8,6 +8,7 @@ import java.util.Date;
 
 @IgnoreExtraProperties
 public class Trip {
+    @Exclude
     public ArrayList<Path> paths = new ArrayList<>();
     private double averageSpeed;
     private double distance;
@@ -16,13 +17,13 @@ public class Trip {
     private float maxSpeed = 0;
     private long tStart;
 
-    public Trip(Date startDate){
+    public Trip(Date startDate) {
         settStart(System.currentTimeMillis());
         setDate(startDate);
 
     }
 
-    public void end_trip(){
+    public void end_trip() {
         long tEnd = System.currentTimeMillis();
         long tDelta = tEnd - gettStart();
         setTime(tDelta / 1000.0);
@@ -30,24 +31,32 @@ public class Trip {
         setDistance(getDistance());
     }
 
-    public double getAverageSpeed(){
+    public double getAverageSpeed() {
         double avgSpeed = 0;
-        for (Path p: getPaths()) {
+        for (Path p : getPaths()) {
             avgSpeed += p.get_speed();
-            if (p.get_speed() > getMaxSpeed()){
+            if (p.get_speed() > getMaxSpeed()) {
                 setMaxSpeed(p.get_speed());
             }
         }
-        return avgSpeed/ getPaths().size();
+        return avgSpeed / getPaths().size();
     }
 
-    public double getDistance(){
+    public void setAverageSpeed(double averageSpeed) {
+        this.averageSpeed = averageSpeed;
+    }
+
+    public double getDistance() {
         double currentDistance = 0;
         Path currentPath = getPaths().get(0);
-        for (int i = 1; i < getPaths().size()-1; i++) {
+        for (int i = 1; i < getPaths().size() - 1; i++) {
             currentDistance += currentPath.getEndLocation().distanceTo(getPaths().get(i).getEndLocation());
         }
         return currentDistance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
     public ArrayList<Path> getPaths() {
@@ -56,14 +65,6 @@ public class Trip {
 
     public void setPaths(ArrayList<Path> paths) {
         this.paths = paths;
-    }
-
-    public void setAverageSpeed(double averageSpeed) {
-        this.averageSpeed = averageSpeed;
-    }
-
-    public void setDistance(double distance) {
-        this.distance = distance;
     }
 
     public double getTime() {
