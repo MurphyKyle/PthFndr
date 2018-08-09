@@ -8,17 +8,15 @@ import java.util.Date;
 
 @IgnoreExtraProperties
 public class Trip {
-    private ArrayList<Path> paths = new ArrayList<>();
+    public ArrayList<Path> paths = new ArrayList<>();
     private double averageSpeed;
     private double distance;
     private double time;//in seconds
     private Date date;
     private float maxSpeed = 0;
-    private int userID;
     private long tStart;
 
-    public Trip(Date startDate, int userID){
-        this.setUserID(userID);
+    public Trip(Date startDate){
         settStart(System.currentTimeMillis());
         setDate(startDate);
 
@@ -90,14 +88,6 @@ public class Trip {
 
     public void setMaxSpeed(float maxSpeed) {
         this.maxSpeed = maxSpeed;
-    }
-
-    public int getUserID() {
-        return userID;
-    }
-
-    public void setUserID(int userID) {
-        this.userID = userID;
     }
 
     public long gettStart() {
