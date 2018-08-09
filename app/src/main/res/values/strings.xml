@@ -9,4 +9,7 @@
     <string name="btn_view_map">View Map</string>
     <string name="signout">Sign Out</string>
     <string name="signin">Sign In</string>
+    <string name="viewTrips">View Trips</string>
+    <string name="viewProfile">View Profile</string>
+
 </resources>

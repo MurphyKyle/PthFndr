@@ -1,6 +1,7 @@
 package dreamteam.pthfndr;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -10,12 +11,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -70,10 +68,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void signOut(View view) {
-        AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
-            public void onComplete(@NonNull Task<Void> task) {
-                finish();
-            }
-        });
+        Intent i = new Intent(this, ProfileActivity.class);
+        startActivity(i);
+
     }
 }
