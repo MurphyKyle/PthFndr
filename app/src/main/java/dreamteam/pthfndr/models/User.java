@@ -5,10 +5,16 @@ import java.util.ArrayList;
 public class User {
 
     private String Name;
+    private String UID;
     private ArrayList<Trip> Trips = new ArrayList<>();
 
-    public User(String name){
+    public User(String name, String ID){
         setName(name);
+        setUID(ID);
+    }
+
+    public User (){
+
     }
 
     public void add_trip(Trip t){
@@ -33,5 +39,13 @@ public class User {
 
     public void setTrips(ArrayList<Trip> trips) {
         Trips = trips;
+    }
+
+    public String getUID() {
+        return UID;
+    }
+
+    public void setUID(String UID) {
+        this.UID = UID;
     }
 }

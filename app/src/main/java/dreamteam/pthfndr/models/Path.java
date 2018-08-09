@@ -13,6 +13,10 @@ public class Path {
     private Color color;
     private int seconds;
 
+    public Path(){
+
+    }
+
     public Path(Location sl, Location el, Polyline p, Color c, int timePassed){
         setEndLocation(el);
         setPl(p);

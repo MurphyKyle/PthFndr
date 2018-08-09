@@ -49,7 +49,7 @@ public class SigninActivity extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 FirebaseDatabase fDB = FirebaseDatabase.getInstance();
                 DatabaseReference fRef = fDB.getReference(user.getUid());
-                Trip t = new Trip(null, user.getUid());
+                Trip t = new Trip(null);
                 t.paths.add(new Path(new Location("hi"), new Location("bye"), null, null, 50));
                 fRef.setValue(t);
 

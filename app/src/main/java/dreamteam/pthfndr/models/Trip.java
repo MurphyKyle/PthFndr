@@ -16,6 +16,9 @@ public class Trip {
     private float maxSpeed = 0;
     private long tStart;
 
+    public Trip(){
+
+    }
     public Trip(Date startDate){
         settStart(System.currentTimeMillis());
         setDate(startDate);
