@@ -29,6 +29,7 @@ import java.util.Set;
 
 import dreamteam.pthfndr.models.Path;
 import dreamteam.pthfndr.models.Trip;
+import dreamteam.pthfndr.models.User;
 
 public class SigninActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
@@ -47,11 +48,17 @@ public class SigninActivity extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK && data != null) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                FirebaseDatabase fDB = FirebaseDatabase.getInstance();
-                DatabaseReference fRef = fDB.getReference(user.getUid());
-                Trip t = new Trip(null);
-                t.paths.add(new Path(new Location("hi"), new Location("bye"), null, null, 50));
-                fRef.setValue(t);
+
+//                FirebaseDatabase fDB = FirebaseDatabase.getInstance();
+//                DatabaseReference fRef = fDB.getReference("users");
+//                User u = new User(user.getDisplayName(), user.getUid());
+//                Trip t = new Trip(null);
+//                t.paths.add(new Path(new Location("bye"), null, null, 50));
+//                u.add_trip(t);
+//                u.add_trip(t);
+//                u.add_trip(t);
+//                u.add_trip(t);
+//                fRef.child(u.getUID()).setValue(u);
 
                 Intent i = new Intent(this, MapsActivity.class);
                 startActivity(i);

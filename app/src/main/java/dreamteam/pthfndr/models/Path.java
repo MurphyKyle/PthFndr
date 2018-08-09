@@ -17,14 +17,14 @@ public class Path {
 
     }
 
-    public Path(Location sl, Location el, Polyline p, Color c, int timePassed){
+    public Path(Location el, Polyline p, Color c, int timePassed){
         setEndLocation(el);
         setPl(p);
         setColor(c);
         setSeconds(timePassed);
     }
 
-    public float get_speed(){
+    public float get_speed() {
         return getEndLocation().getSpeed() * 3.6F;
     }
 
