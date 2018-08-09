@@ -10,6 +10,7 @@ import java.util.Date;
 public class Trip {
     @Exclude
     public ArrayList<Path> paths = new ArrayList<>();
+
     private double averageSpeed;
     private double distance;
     private double time;//in seconds
@@ -17,10 +18,12 @@ public class Trip {
     private float maxSpeed = 0;
     private long tStart;
 
+    public Trip() {
+    }
+
     public Trip(Date startDate) {
         settStart(System.currentTimeMillis());
         setDate(startDate);
-
     }
 
     public void end_trip() {

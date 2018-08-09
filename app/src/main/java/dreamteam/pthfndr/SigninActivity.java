@@ -49,13 +49,16 @@ public class SigninActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK && data != null) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                FirebaseDatabase fDB = FirebaseDatabase.getInstance();
-                DatabaseReference fRef = fDB.getReference("users").child(user.getUid());
-                User u = new User(user.getDisplayName());
-                Trip t = new Trip(null);
-                t.paths.add(new Path(new Location("hi"), new Location("bye"), null, null, 50));
-                u.add_trip(t);
-                fRef.setValue(u);
+//                FirebaseDatabase fDB = FirebaseDatabase.getInstance();
+//                DatabaseReference fRef = fDB.getReference("users");
+//                User u = new User(user.getDisplayName(), user.getUid());
+//                Trip t = new Trip(null);
+//                t.paths.add(new Path(new Location("bye"), null, null, 50));
+//                u.add_trip(t);
+//                u.add_trip(t);
+//                u.add_trip(t);
+//                u.add_trip(t);
+//                fRef.child(u.getUID()).setValue(u);
 
                 Intent i = new Intent(this, MapsActivity.class);
                 startActivity(i);
