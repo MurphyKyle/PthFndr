@@ -1,5 +1,7 @@
 package dreamteam.pthfndr.models;
 
+import android.view.ViewDebug;
+
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -49,6 +51,7 @@ public class Trip {
         this.averageSpeed = averageSpeed;
     }
 
+    @Exclude
     public double getDistance() {
         double currentDistance = 0;
         Path currentPath = getPaths().get(0);
@@ -62,6 +65,7 @@ public class Trip {
         this.distance = distance;
     }
 
+    @Exclude
     public ArrayList<Path> getPaths() {
         return paths;
     }

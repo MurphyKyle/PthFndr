@@ -1,6 +1,7 @@
 package dreamteam.pthfndr;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -20,7 +21,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
+import dreamteam.pthfndr.models.Path;
+import dreamteam.pthfndr.models.Trip;
 import dreamteam.pthfndr.models.User;
 
 
@@ -41,7 +45,7 @@ public class SigninActivity extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK && data != null) {
-                final DatabaseReference fDB = FirebaseDatabase.getInstance().getReference();
+                final DatabaseReference fDB = FirebaseDatabase.getInstance().getReference().child("users");
                 fDB.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
@@ -50,9 +54,11 @@ public class SigninActivity extends AppCompatActivity {
                             User newUser = new User();
                             newUser.setName(user.getDisplayName());
                             newUser.setUID(user.getUid());
+                            newUser.add_trip(randomTrip());
+                            newUser.add_trip(randomTrip());
                             Map<String, Object> userValues = newUser.toMap();
                             Map<String, Object> userUpdates = new HashMap<>();
-                            userUpdates.put("/users/"+newUser.getUID(), userValues);
+                            userUpdates.put("/"+newUser.getUID()+"/", userValues);
                             fDB.updateChildren(userUpdates);
                         }
                     }
@@ -62,6 +68,13 @@ public class SigninActivity extends AppCompatActivity {
 
                     }
                 });
+                //This code adds trips to the user for test data
+//                            newUser.add_trip(randomTrip());
+//                            newUser.add_trip(randomTrip());
+//                            newUser.add_trip(randomTrip());
+
+
+
 //                User u = new User(user.getDisplayName(), user.getUid());
 //                Trip t = new Trip(null);
 //                t.paths.add(new Path(new Location("bye"), null, null, 50));
@@ -88,4 +101,29 @@ public class SigninActivity extends AppCompatActivity {
                 .setLogo(R.drawable.pth_fndr_logo1png)
                 .setTheme(R.style.Theme_AppCompat_DayNight_NoActionBar).setAvailableProviders(providers).build(), RC_SIGN_IN);
     }
+
+    private Trip randomTrip(){
+
+        Trip trip = new Trip();
+        trip.setAverageSpeed(generateRandomDouble(100));
+        trip.setDistance(generateRandomDouble(1000));
+        trip.setMaxSpeed(generateRandomFloat(200));
+        trip.setTime(generateRandomDouble(100));
+        trip.paths.add(new Path(new Location("bye"), null, null, new Random().nextInt(100)));
+        return trip;
+    }
+
+    private float generateRandomFloat(float max){
+        float leftLimit = 1F;
+        float rightLimit = 10F;
+        float generatedFloat = leftLimit + new Random().nextFloat() * (rightLimit - leftLimit);
+        return generatedFloat;
+    }
+    private double generateRandomDouble(double max){
+        double leftLimit = 1D;
+        double rightLimit = max;
+        double generatedDouble = leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
+        return generatedDouble;
+    }
+
 }
