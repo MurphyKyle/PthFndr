@@ -5,17 +5,20 @@ import android.view.ViewDebug;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 
 @IgnoreExtraProperties
-public class Trip {
+public class Trip implements Comparable<Trip> {
 
     public ArrayList<Path> paths = new ArrayList<>();
 
-    private double averageSpeed;
-    private double distance;
+    private float averageSpeed;
+    private float distance;
     private double time;//in seconds
+    private Time timeObj;
     private Date date;
     private float maxSpeed = 0;
     private long tStart;
@@ -31,13 +34,14 @@ public class Trip {
     public void end_trip() {
         long tEnd = System.currentTimeMillis();
         long tDelta = tEnd - getStart();
+        setTimeObj(tDelta);
         setTime(tDelta / 1000.0);
         setAverageSpeed(getAverageSpeed());
         setDistance(getDistance());
     }
 
-    public double getAverageSpeed() {
-        double avgSpeed = 0;
+    public float getAverageSpeed() {
+        float avgSpeed = 0;
         for (Path p : getPaths()) {
             avgSpeed += p.get_speed();
             if (p.get_speed() > getMaxSpeed()) {
@@ -47,13 +51,13 @@ public class Trip {
         return avgSpeed / getPaths().size();
     }
 
-    public void setAverageSpeed(double averageSpeed) {
+    public void setAverageSpeed(float averageSpeed) {
         this.averageSpeed = averageSpeed;
     }
 
 
-    public double getDistance() {
-        double currentDistance = 0;
+    public float getDistance() {
+        float currentDistance = 0;
         Path currentPath = getPaths().get(0);
         for (int i = 1; i < getPaths().size() - 1; i++) {
             currentDistance += currentPath.getEndLocation().distanceTo(getPaths().get(i).getEndLocation());
@@ -61,7 +65,7 @@ public class Trip {
         return currentDistance;
     }
 
-    public void setDistance(double distance) {
+    public void setDistance(float distance) {
         this.distance = distance;
     }
 
@@ -100,8 +104,41 @@ public class Trip {
     public long getStart() {
         return tStart;
     }
-
+    
     public void setStart(long tStart) {
         this.tStart = tStart;
+    }
+    
+    public void setTimeObj(long sysMillis) {
+        this.timeObj = new Time(sysMillis);
+    }
+    
+    public void setTimeObj(Time timeObj) {
+        this.timeObj = timeObj;
+    }
+    
+    /**
+     *
+     * @param giveStringValue Specify if you want the string representation
+     * @return The time object itself, OR The time object in "hh:mm:ss" format
+     * Note: Must cast result to java.sql.Time object or to String
+     */
+    public Object getTimeObj(boolean giveStringValue) {
+        if (giveStringValue) {
+            return this.timeObj.toString();
+        }
+        return this.timeObj;
+    }
+    
+    @Override
+    public int compareTo(Trip other) {
+        return Comparators.DATE.compare(this, other);
+    }
+    
+    public static class Comparators {
+        
+        public static Comparator<Trip> DATE = (o1, o2) -> o1.date.compareTo(o2.date);
+        
+        public static Comparator<Trip> MAXSPEED = (o1, o2) -> Float.compare(o1.maxSpeed, o2.maxSpeed);
     }
 }

@@ -5,11 +5,16 @@
     <string name="lbl_distance">Distance:</string>
     <string name="lbl_time">Total Time:</string>
     <string name="lbl_date">Date:</string>
+    <string name="lbl_name">Name:</string>
     <string name="lbl_max_speed">Max Speed:</string>
+    <string name="lbl_join_date">Join Date:</string>
+    <string name="lbl_total_trip_count">Total Trips:</string>
+    <string name="lbl_total_distance">Total Distance:</string>
+    <string name="lbl_total_average_distance">Average Distance:</string>
     <string name="btn_view_map">View Map</string>
-    <string name="signout">Sign Out</string>
-    <string name="signin">Sign In</string>
-    <string name="viewTrips">View Trips</string>
+    <string name="btn_sign_out">Sign Out</string>
+    <string name="btn_sign_in">Sign In</string>
+    <string name="btn_view_trips">View Trips</string>
     <string name="viewProfile">View Profile</string>
     <string name="noTripsToView">No trips to view</string>
 </resources>

@@ -33,17 +33,20 @@ public class TripHistoryActivity extends AppCompatActivity {
 		super.onCreate(bundle);
 		
 		// ignoring what the parcel is actually called..
-		String[] keys = getIntent().getExtras().keySet().toArray(new String[1]);
-		// ..get the user - we should only get the user's data into the activity, nothing else
-		setTheUser(getIntent().getExtras().getParcelable(keys[0]));
-		ArrayList<Trip> trips = getTheUser().getTrips();
-		
-		if (trips.size() > 0) {
-			// build the list of selectable trips
-			buildTripList(trips);
-		} else {
-			// notify if the user has no trips to view
-			setEmptyTripList();
+		if (getIntent().getExtras() != null) {
+			
+			String[] keys = getIntent().getExtras().keySet().toArray(new String[1]);
+			// ..get the user - we should only get the user's data into the activity, nothing else
+			setTheUser(getIntent().getExtras().getParcelable(keys[0]));
+			ArrayList<Trip> trips = getTheUser().getTrips();
+			
+			if (trips.size() > 0) {
+				// build the list of selectable trips
+				buildTripList(trips);
+			} else {
+				// notify if the user has no trips to view
+				setEmptyTripList();
+			}
 		}
 	}
 	
@@ -67,64 +70,120 @@ public class TripHistoryActivity extends AppCompatActivity {
 				setFirstTripData(trip);
 			} else {
 				// next trip entry
-				addTripData(trip);
+				addTripUpdateToView(trip);
 			}
 			getActiveTrips().add(trip);
 		} else {
 			// subtract data from view
-			subtractTripData(trip);
+			subtractTripUpdateToView(trip);
 			getActiveTrips().remove(trip);
 		}
 		
-		updateTripDates();
+		int newSize = getActiveTrips().size();
+		if (newSize > 0) {
+			setActiveTripAverageSpeedToView(newSize);
+			setActiveTripMaxSpeedToView(newSize);
+			setActiveTripDatesToView(newSize);
+		} else {
+			// 0 trips
+			resetView();
+		}
 	}
 	
-	private void updateTripDates() {
+	private void resetView() {
+		getTxtAverageSpeed().setText("");
+		getTxtMaxSpeed().setText("");
+		getTxtDistance().setText("");
+		getTxtDate().setText("");
+		getTxtTime().setText("");
+	}
+	
+	private void setActiveTripDatesToView(int size) {
 		// get trips
 		ArrayList<Trip> trips = getActiveTrips();
-		//Collections.sort(trips, Trip.Comparators.DATE);
 		
-		// get earliest date
-		String earliest = trips.get(0).getDate().toString();
-		
-		// get latest date
-		String latest = trips.get(trips.size() - 1).getDate().toString();
-		
-		// set date text to range
-		String text = earliest + " - " + latest;
-		getTxtDate().setText(text);
+		if (size > 1) {
+			Collections.sort(trips, Trip.Comparators.DATE);
+			
+			// get earliest date
+			String earliest = trips.get(0).getDate().toString();
+			
+			// get latest date
+			String latest = trips.get(trips.size() - 1).getDate().toString();
+			
+			// set date text to range
+			String text = earliest + " - " + latest;
+			getTxtDate().setText(text);
+		} else {
+			getTxtDate().setText(trips.get(0).getDate().toString());
+		}
 	}
 	
 	private void setFirstTripData(Trip trip) {
 		getTxtDate().setText(trip.getDate().toString());
-		String timeString = getTimeString(trip);
+		String timeString = formatTimeString((String)trip.getTimeObj(false));
 		getTxtTime().setText(timeString);
 		getTxtDistance().setText(String.valueOf(trip.getDistance()));
 		getTxtMaxSpeed().setText(String.valueOf(trip.getMaxSpeed()));
 		getTxtAverageSpeed().setText(String.valueOf(trip.getAverageSpeed()));
 	}
 	
-	private String getTimeString(Trip trip) {
+	private String formatTimeString(String timeObjString) {
+		String[] hms = timeObjString.split(":");
+		return String.format("%1$s Hr %2$s Min %3$s Sec", hms[0], hms[1], hms[2]);
+	}
+	
+	private void addTripUpdateToView(Trip trip) {
+		// distance
+		TextView txtDistance = getTxtDistance();
+		float distance = Float.parseFloat(txtDistance.getText().toString());
+		txtDistance.setText(String.valueOf(distance + trip.getDistance()));
 		
-		String time = null;//(String)trip.getTimeObj(true);
-		String[] hms = time.split(":");
-		return String.format("%1$s Hr %2$s Min  %3$s Sec", hms[0], hms[1], hms[2]);
+		// time
+		TextView txtTime = getTxtTime();
+		// get in hh:mm:ss
+		Date tripTime = (Time) trip.getTimeObj(true);
+		
+		// get time obj from view
+		Date oldTime = Time.valueOf(getJDBCTimeFormat(txtTime.getText().toString()));
+		long newMilis = oldTime.getTime() + tripTime.getTime();
+		
+		// create the new time to display to view
+		Time newTime = new Time(newMilis);
+		txtTime.setText(formatTimeString(newTime.toString()));
 	}
 	
-	private void addTripData(Trip trip) {
-		TripData.updateModel(this);
-		TripData.setDistance(trip.getDistance() + TripData.getDistance());
-		TripData.setMaxSpeed(trip.getMaxSpeed() + TripData.getMaxSpeed());
-		TripData.setAverageSpeed(trip.getAverageSpeed() + TripData.getAverageSpeed());
-		TripData.updateView(this);
+	private void subtractTripUpdateToView(Trip trip) {
+		// distance
+		TextView txtDistance = getTxtDistance();
+		float distance = Float.parseFloat(txtDistance.getText().toString());
+		txtDistance.setText(String.valueOf(distance - trip.getDistance()));
+		
+		// time
+		TextView txtTime = getTxtTime();
+		// get in hh:mm:ss
+		Date tripTime = (Time) trip.getTimeObj(true);
+		
+		// get time obj from view
+		Date oldTime = Time.valueOf(getJDBCTimeFormat(txtTime.getText().toString()));
+		long newMilis = oldTime.getTime() - tripTime.getTime();
+		
+		// create the new time to display to view
+		Time newTime = new Time(newMilis);
+		txtTime.setText(formatTimeString(newTime.toString()));
 	}
 	
-	private void subtractTripData(Trip trip) {
-		TripData.updateModel(this);
-		TripData.setDistance(TripData.getDistance() - trip.getDistance());
-		TripData.setMaxSpeed(getActiveTripMaxSpeed());
-		TripData.setAverageSpeed(getActiveTripAverageSpeed());
-		TripData.updateView(this);
+	private String getJDBCTimeFormat(String viewFormat) {
+		// where viewFormat == "%1$s Hr %2$s Min %3$s Sec"
+		// return as hh:mm:ss
+		if (viewFormat != null) {
+			viewFormat = viewFormat.replace(" Hr ", ":");
+			viewFormat = viewFormat.replace(" Min ", ":");
+			viewFormat = viewFormat.replace(" Sec", "");
+		}
+
+		// may be null
+		return viewFormat;
 	}
 	
 	private void setEmptyTripList() {
@@ -133,23 +192,30 @@ public class TripHistoryActivity extends AppCompatActivity {
 		getTripListView().addView(tv);
 	}
 	
-	private float getActiveTripMaxSpeed() {
+	private void setActiveTripMaxSpeedToView(int size) {
 		ArrayList<Trip> trips = getActiveTrips();
-		int size = trips.size();
-		//Collections.sort(trips, Trip.Comparators.MAXSPEED);
-		return trips.get(size - 1).getMaxSpeed();
+		
+		if (size > 1) {
+			Collections.sort(trips, Trip.Comparators.MAXSPEED);
+			getTxtMaxSpeed().setText(String.valueOf(trips.get(size - 1).getMaxSpeed()));
+		} else {
+			getTxtMaxSpeed().setText(String.valueOf(trips.get(0).getMaxSpeed()));
+		}
 	}
 	
-	private float getActiveTripAverageSpeed() {
+	private void setActiveTripAverageSpeedToView(int size) {
 		ArrayList<Trip> trips = getActiveTrips();
-		int size = trips.size();
-		double total = 0;
-		
-		for (Trip t : trips) {
-			total += t.getAverageSpeed();
+		if (size > 1) {
+			float total = 0;
+			
+			for (Trip t : trips) {
+				total += t.getAverageSpeed();
+			}
+			
+			getTxtAverageSpeed().setText(String.valueOf(total / size));
+		} else {
+			getTxtAverageSpeed().setText(String.valueOf(trips.get(0).getAverageSpeed()));
 		}
-		
-		return (float) (total / size);
 	}
 	
 	private void buildTripList(ArrayList<Trip> trips) {
@@ -165,7 +231,6 @@ public class TripHistoryActivity extends AppCompatActivity {
 			getTripListView().addView(tog);
 		}
 	}
-	
 	
 	public User getTheUser() {
 		return theUser;
@@ -202,53 +267,4 @@ public class TripHistoryActivity extends AppCompatActivity {
 	public ArrayList<Trip> getActiveTrips() {
 		return activeTrips;
 	}
-	
-	/**
-	 * Helper class to update the view easier
-	 */
-	private static class TripData {
-		private static String time;
-		private static String distance;
-		private static String maxSpeed;
-		private static String averageSpeed;
-		
-		public static void updateModel(TripHistoryActivity src) {
-			time = (String) src.getTxtTime().getText();
-			distance = (String) src.getTxtDistance().getText();
-			maxSpeed = (String) src.getTxtMaxSpeed().getText();
-			averageSpeed = (String) src.getTxtAverageSpeed().getText();
-		}
-		
-		public static void updateView(TripHistoryActivity src) {
-			src.getTxtDistance().setText(distance);
-			src.getTxtMaxSpeed().setText(maxSpeed);
-			src.getTxtAverageSpeed().setText(averageSpeed);
-		}
-		
-		public static double getDistance() {
-			return Double.parseDouble(distance);
-		}
-		
-		public static float getMaxSpeed() {
-			return Float.parseFloat(maxSpeed);
-		}
-		
-		public static double getAverageSpeed() {
-			return Double.parseDouble(averageSpeed);
-		}
-		
-		public static void setDistance(double distance) {
-			TripData.distance = String.valueOf(distance);
-		}
-		
-		public static void setMaxSpeed(float maxSpeed) {
-			TripData.maxSpeed = String.valueOf(maxSpeed);
-		}
-		
-		public static void setAverageSpeed(double averageSpeed) {
-			TripData.averageSpeed = String.valueOf(averageSpeed);
-		}
-		
-	}
-	
 }

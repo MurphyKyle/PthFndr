@@ -53,12 +53,18 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    public void signOut(View view) {
+    public void signOutOnClick(View view) {
         AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
             public void onComplete(@NonNull Task<Void> task) {
                 finalizeSignOut();
             }
         });
+    }
+    
+    public void viewTripsOnClick(View view) {
+        Intent tent = new Intent(this, TripHistoryActivity.class);
+        tent.putExtra("user", user);
+        startActivity(tent);
     }
 
     public void finalizeSignOut(){
