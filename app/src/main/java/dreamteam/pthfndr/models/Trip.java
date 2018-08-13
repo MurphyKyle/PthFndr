@@ -10,7 +10,6 @@ import java.util.Date;
 
 @IgnoreExtraProperties
 public class Trip {
-    @Exclude
     public ArrayList<Path> paths = new ArrayList<>();
 
     private double averageSpeed;
@@ -65,7 +64,7 @@ public class Trip {
         this.distance = distance;
     }
 
-    @Exclude
+
     public ArrayList<Path> getPaths() {
         return paths;
     }

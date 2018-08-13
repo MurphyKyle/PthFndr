@@ -54,8 +54,9 @@ public class SigninActivity extends AppCompatActivity {
                             User newUser = new User();
                             newUser.setName(user.getDisplayName());
                             newUser.setUID(user.getUid());
-                            newUser.add_trip(randomTrip());
-                            newUser.add_trip(randomTrip());
+//                            newUser.add_trip(randomTrip());
+//                            newUser.add_trip(randomTrip());
+//                            newUser.add_trip(randomTrip());
                             Map<String, Object> userValues = newUser.toMap();
                             Map<String, Object> userUpdates = new HashMap<>();
                             userUpdates.put("/"+newUser.getUID()+"/", userValues);

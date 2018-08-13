@@ -27,6 +27,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private FirebaseUser authUser;
     private DatabaseReference mUserReference;
+    private User user;
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -38,11 +39,10 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public void onStart(){
         super.onStart();
-        ValueEventListener travelInfoListener = new ValueEventListener() {
+        mUserReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                User user = dataSnapshot.getValue(User.class);
+                user = dataSnapshot.getValue(User.class);
                 String name = user.getName();
             }
 
@@ -50,8 +50,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.w("Bad", "loadFailed:onCanceled", databaseError.toException());
             }
-        };
-        mUserReference.addValueEventListener(travelInfoListener);
+        });
     }
 
     public void signOut(View view) {
