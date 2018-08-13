@@ -1,5 +1,8 @@
 package dreamteam.pthfndr.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -8,7 +11,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class User {
+public class User  implements Parcelable{
+
+    private int mData;
+
+    public static final Parcelable.Creator<User> CREATOR
+            = new Parcelable.Creator<User>() {
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
+
 
     private String Name;
     @Exclude
@@ -19,9 +36,11 @@ public class User {
         setName(name);
         setUID(ID);
     }
-
     public User (){
 
+    }
+    private User(Parcel in) {
+        mData = in.readInt();
     }
 
     public void add_trip(Trip t){
@@ -57,5 +76,15 @@ public class User {
         result.put("Name", Name);
         result.put("Trips", Trips);
         return result;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(mData);
     }
 }
