@@ -1,5 +1,7 @@
 package dreamteam.pthfndr.models;
 
+import android.view.ViewDebug;
+
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -8,7 +10,7 @@ import java.util.Date;
 
 @IgnoreExtraProperties
 public class Trip {
-    @Exclude
+
     public ArrayList<Path> paths = new ArrayList<>();
 
     private double averageSpeed;
@@ -22,13 +24,13 @@ public class Trip {
     }
 
     public Trip(Date startDate) {
-        settStart(System.currentTimeMillis());
+        setStart(System.currentTimeMillis());
         setDate(startDate);
     }
 
     public void end_trip() {
         long tEnd = System.currentTimeMillis();
-        long tDelta = tEnd - gettStart();
+        long tDelta = tEnd - getStart();
         setTime(tDelta / 1000.0);
         setAverageSpeed(getAverageSpeed());
         setDistance(getDistance());
@@ -48,6 +50,7 @@ public class Trip {
     public void setAverageSpeed(double averageSpeed) {
         this.averageSpeed = averageSpeed;
     }
+
 
     public double getDistance() {
         double currentDistance = 0;
@@ -94,11 +97,11 @@ public class Trip {
         this.maxSpeed = maxSpeed;
     }
 
-    public long gettStart() {
+    public long getStart() {
         return tStart;
     }
 
-    public void settStart(long tStart) {
+    public void setStart(long tStart) {
         this.tStart = tStart;
     }
 }

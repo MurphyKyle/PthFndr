@@ -2,7 +2,10 @@ package dreamteam.pthfndr;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
@@ -12,15 +15,64 @@ import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
+import android.view.View;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Calendar;
+
+import dreamteam.pthfndr.models.Path;
+import dreamteam.pthfndr.models.Trip;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+    double latitude = 0;
+    double longitude = 0;
+    Trip trip = new Trip(Calendar.getInstance().getTime());
+    long time = 0;
     private GoogleMap mMap;
+    private final LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            double longitudeNew = location.getLongitude();
+            double latitudeNew = location.getLatitude();
+            Polyline l = mMap.addPolyline(new PolylineOptions()
+                    .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                    .width(5)
+                    .color(Color.DKGRAY)
+            );
+            trip.paths.add(new Path(new Location("Test"), l, Color.DKGRAY, (int) ((System.currentTimeMillis() - time) / 1000)));
+            trip.end_trip();
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+            FirebaseDatabase fd = FirebaseDatabase.getInstance();
+            DatabaseReference ref = fd.getReference().child("TESTS");
+            ref.setValue(trip);
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+        }
+    };
+    private boolean mLocationPermissionGranted;
 
     private Location mLastLocation;
 
@@ -28,7 +80,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
@@ -36,18 +87,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+        getLocationPermission();
 
-        LatLng saltLake = new LatLng(40.7608, -111.8910);
-        mMap.addMarker(new MarkerOptions().position(saltLake).title("Marker in Salt Lake City"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(saltLake));
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.setBuildingsEnabled(true);
+
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        longitude = location.getLongitude();
+        latitude = location.getLatitude();
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
+
+        time = System.currentTimeMillis();
+    }
+
+    private void getLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        mLocationPermissionGranted = false;
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mLocationPermissionGranted = true;
+                    if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                            && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    mMap.setMyLocationEnabled(true);
+                    mMap.getUiSettings().setMyLocationButtonEnabled(true);
+                }
+            }
+        }
     }
 
     public void signOut(View view) {
         Intent i = new Intent(this, ProfileActivity.class);
         startActivity(i);
-
     }
 
     public void onLocationChanged(Location location) {
