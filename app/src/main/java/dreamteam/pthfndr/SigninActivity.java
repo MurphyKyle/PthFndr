@@ -110,13 +110,13 @@ public class SigninActivity extends AppCompatActivity {
         trip.setDistance(generateRandomDouble(1000));
         trip.setMaxSpeed(generateRandomFloat(200));
         trip.setTime(generateRandomDouble(100));
-        trip.paths.add(new Path(new Location("bye"), null, null, new Random().nextInt(100)));
+        trip.paths.add(new Path(new Location("bye"), null, (int)generateRandomDouble(100), new Random().nextInt(100)));
         return trip;
     }
 
     private float generateRandomFloat(float max){
         float leftLimit = 1F;
-        float rightLimit = 10F;
+        float rightLimit = max;
         float generatedFloat = leftLimit + new Random().nextFloat() * (rightLimit - leftLimit);
         return generatedFloat;
     }

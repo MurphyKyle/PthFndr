@@ -10,6 +10,7 @@ import java.util.Date;
 
 @IgnoreExtraProperties
 public class Trip {
+
     public ArrayList<Path> paths = new ArrayList<>();
 
     private double averageSpeed;
@@ -23,13 +24,13 @@ public class Trip {
     }
 
     public Trip(Date startDate) {
-        settStart(System.currentTimeMillis());
+        setStart(System.currentTimeMillis());
         setDate(startDate);
     }
 
     public void end_trip() {
         long tEnd = System.currentTimeMillis();
-        long tDelta = tEnd - gettStart();
+        long tDelta = tEnd - getStart();
         setTime(tDelta / 1000.0);
         setAverageSpeed(getAverageSpeed());
         setDistance(getDistance());
@@ -50,7 +51,7 @@ public class Trip {
         this.averageSpeed = averageSpeed;
     }
 
-    @Exclude
+
     public double getDistance() {
         double currentDistance = 0;
         Path currentPath = getPaths().get(0);
@@ -63,7 +64,6 @@ public class Trip {
     public void setDistance(double distance) {
         this.distance = distance;
     }
-
 
     public ArrayList<Path> getPaths() {
         return paths;
@@ -97,11 +97,11 @@ public class Trip {
         this.maxSpeed = maxSpeed;
     }
 
-    public long gettStart() {
+    public long getStart() {
         return tStart;
     }
 
-    public void settStart(long tStart) {
+    public void setStart(long tStart) {
         this.tStart = tStart;
     }
 }

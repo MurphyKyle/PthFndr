@@ -3,6 +3,7 @@ package dreamteam.pthfndr.models;
 import android.graphics.Color;
 import android.location.Location;
 
+import com.google.android.gms.maps.model.ButtCap;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -10,14 +11,13 @@ import com.google.firebase.database.IgnoreExtraProperties;
 public class Path {
     private Location endLocation;
     private Polyline pl;
-    private Color color;
+    private int color;
     private int seconds;
 
     public Path(){
-
     }
 
-    public Path(Location el, Polyline p, Color c, int timePassed){
+    public Path(Location el, Polyline p, int c, int timePassed){
         setEndLocation(el);
         setPl(p);
         setColor(c);
@@ -44,11 +44,11 @@ public class Path {
         this.pl = pl;
     }
 
-    public Color getColor() {
+    public int getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public void setColor(int color) {
         this.color = color;
     }
 
