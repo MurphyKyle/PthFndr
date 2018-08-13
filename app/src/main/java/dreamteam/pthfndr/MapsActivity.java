@@ -3,6 +3,9 @@ package dreamteam.pthfndr;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,9 +17,53 @@ import android.view.View;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Calendar;
+
+import dreamteam.pthfndr.models.Path;
+import dreamteam.pthfndr.models.Trip;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+    double latitude = 0;
+    double longitude = 0;
+    Trip trip = new Trip(Calendar.getInstance().getTime());
+    long time = 0;
     private GoogleMap mMap;
+    private final LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            double longitudeNew = location.getLongitude();
+            double latitudeNew = location.getLatitude();
+            Polyline l = mMap.addPolyline(new PolylineOptions()
+                    .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                    .width(5)
+                    .color(Color.DKGRAY)
+            );
+            trip.paths.add(new Path(new Location("Test"), l, Color.DKGRAY, (int) ((System.currentTimeMillis() - time) / 1000)));
+            trip.end_trip();
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+            FirebaseDatabase fd = FirebaseDatabase.getInstance();
+            DatabaseReference ref = fd.getReference().child("TESTS");
+            ref.setValue(trip);
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+        }
+    };
     private boolean mLocationPermissionGranted;
 
     @Override
@@ -30,13 +77,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         getLocationPermission();
 
-//        LatLng saltLake = new LatLng(40.766517, -111.890668);
-//        mMap.addMarker(new MarkerOptions().position(saltLake).title("Marker in Salt Lake City"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(saltLake));
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.setBuildingsEnabled(true);
+
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        longitude = location.getLongitude();
+        latitude = location.getLatitude();
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
+
+        time = System.currentTimeMillis();
     }
 
     private void getLocationPermission() {
@@ -70,6 +127,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void signOut(View view) {
         Intent i = new Intent(this, ProfileActivity.class);
         startActivity(i);
-
     }
 }
