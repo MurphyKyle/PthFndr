@@ -1,5 +1,7 @@
 package dreamteam.pthfndr.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.ViewDebug;
 
 import com.google.firebase.database.Exclude;
@@ -9,10 +11,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 @IgnoreExtraProperties
-public class Trip {
+public class Trip implements Parcelable{
 
     public ArrayList<Path> paths = new ArrayList<>();
-
     private double averageSpeed;
     private double distance;
     private double time;//in seconds
@@ -20,12 +21,31 @@ public class Trip {
     private float maxSpeed = 0;
     private long tStart;
 
+    public static final Parcelable.Creator<Trip> CREATOR
+            = new Parcelable.Creator<Trip>() {
+        public Trip createFromParcel(Parcel in) {
+            return new Trip(in);
+        }
+
+        public Trip[] newArray(int size) {
+            return new Trip[size];
+        }
+    };
+
     public Trip() {
     }
 
     public Trip(Date startDate) {
         setStart(System.currentTimeMillis());
         setDate(startDate);
+    }
+
+    public Trip(Parcel in){
+        averageSpeed = in.readDouble();
+        distance = in.readDouble();
+        time = in.readDouble();
+        maxSpeed = in.readFloat();
+        tStart = in.readLong();
     }
 
     public void end_trip() {
@@ -37,6 +57,9 @@ public class Trip {
     }
 
     public double getAverageSpeed() {
+        if(averageSpeed!=0  ){
+            return averageSpeed;
+        }
         double avgSpeed = 0;
         for (Path p : getPaths()) {
             avgSpeed += p.get_speed();
@@ -51,8 +74,10 @@ public class Trip {
         this.averageSpeed = averageSpeed;
     }
 
-
     public double getDistance() {
+        if(distance != 0){
+            return distance;
+        }
         double currentDistance = 0;
         Path currentPath = getPaths().get(0);
         for (int i = 1; i < getPaths().size() - 1; i++) {
@@ -103,5 +128,17 @@ public class Trip {
 
     public void setStart(long tStart) {
         this.tStart = tStart;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.
+        parcel.writeValue(date);
+
     }
 }
