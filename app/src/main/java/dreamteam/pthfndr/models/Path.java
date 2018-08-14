@@ -27,7 +27,8 @@ public class Path implements Parcelable {
     }
 
     protected Path(Parcel in) {
-        endLocation = in.readParcelable(Location.class.getClassLoader());
+        endLocation = (Location)in.readValue(getClass().getClassLoader());
+        pl = (Polyline) in.readValue(getClass().getClassLoader());
         color = in.readInt();
         seconds = in.readInt();
     }
