@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import dreamteam.pthfndr.models.MLocation;
 import dreamteam.pthfndr.models.Path;
 import dreamteam.pthfndr.models.Trip;
 import dreamteam.pthfndr.models.User;
@@ -59,21 +61,19 @@ public class SigninActivity extends AppCompatActivity {
                             newUser.add_trip(randomTrip());
                             Map<String, Object> userValues = newUser.toMap();
                             Map<String, Object> userUpdates = new HashMap<>();
-                            userUpdates.put("/"+newUser.getUID()+"/", userValues);
+                            userUpdates.put("/" + newUser.getUID() + "/", userValues);
                             fDB.updateChildren(userUpdates);
                         }
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 });
                 //This code adds trips to the user for test data
 //                            newUser.add_trip(randomTrip());
 //                            newUser.add_trip(randomTrip());
 //                            newUser.add_trip(randomTrip());
-
 
 
 //                User u = new User(user.getDisplayName(), user.getUid());
@@ -103,24 +103,25 @@ public class SigninActivity extends AppCompatActivity {
                 .setTheme(R.style.Theme_AppCompat_DayNight_NoActionBar).setAvailableProviders(providers).build(), RC_SIGN_IN);
     }
 
-    private Trip randomTrip(){
+    private Trip randomTrip() {
 
         Trip trip = new Trip();
         trip.setAverageSpeed(generateRandomFloat(100));
         trip.setDistance(generateRandomFloat(1000));
         trip.setMaxSpeed(generateRandomFloat(200));
         trip.setTime(generateRandomDouble(100));
-        trip.paths.add(new Path(new Location("bye"), null, (int)generateRandomDouble(100), new Random().nextInt(100)));
+        trip.paths.add(new Path(new MLocation(0, new LatLng(0, 0)), new MLocation(0, new LatLng(0, 0)), null, (int) generateRandomDouble(100), new Random().nextInt(100)));
         return trip;
     }
 
-    private float generateRandomFloat(float max){
+    private float generateRandomFloat(float max) {
         float leftLimit = 1F;
         float rightLimit = max;
         float generatedFloat = leftLimit + new Random().nextFloat() * (rightLimit - leftLimit);
         return generatedFloat;
     }
-    private double generateRandomDouble(double max){
+
+    private double generateRandomDouble(double max) {
         double leftLimit = 1D;
         double rightLimit = max;
         double generatedDouble = leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);

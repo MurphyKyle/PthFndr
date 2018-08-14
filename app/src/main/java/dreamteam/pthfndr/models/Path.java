@@ -1,38 +1,14 @@
 package dreamteam.pthfndr.models;
 
-import android.graphics.Color;
-import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.android.gms.maps.model.ButtCap;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class Path implements Parcelable {
-    private Location endLocation;
-    private Polyline pl;
-    private int color;
-    private int seconds;
-
-    public Path(){
-    }
-
-    public Path(Location el, Polyline p, int c, int timePassed){
-        setEndLocation(el);
-        setPl(p);
-        setColor(c);
-        setSeconds(timePassed);
-    }
-
-    protected Path(Parcel in) {
-        endLocation = (Location)in.readValue(getClass().getClassLoader());
-        pl = (Polyline) in.readValue(getClass().getClassLoader());
-        color = in.readInt();
-        seconds = in.readInt();
-    }
-
     public static final Creator<Path> CREATOR = new Creator<Path>() {
         @Override
         public Path createFromParcel(Parcel in) {
@@ -44,19 +20,52 @@ public class Path implements Parcelable {
             return new Path[size];
         }
     };
+    private Polyline pl;
+    private int color;
+    private int seconds;
+    private MLocation endLocation;
+    private MLocation startLocation;
+
+    public Path() {
+    }
+
+    public Path(MLocation sl, MLocation el, Polyline p, int c, int timePassed) {
+        setStartLocation(sl);
+        setEndLocation(el);
+        setPl(p);
+        setColor(c);
+        setSeconds(timePassed);
+    }
+
+    protected Path(Parcel in) {
+        endLocation = (MLocation) in.readValue(getClass().getClassLoader());
+        startLocation = (MLocation) in.readValue(getClass().getClassLoader());
+        pl = (Polyline) in.readValue(getClass().getClassLoader());
+        color = in.readInt();
+        seconds = in.readInt();
+    }
+
+    public MLocation getStartLocation() {
+        return startLocation;
+    }
+
+    public void setStartLocation(MLocation startLocation) {
+        this.startLocation = startLocation;
+    }
 
     public float get_speed() {
         return getEndLocation().getSpeed() * 3.6F;
     }
 
-    public Location getEndLocation() {
+    public MLocation getEndLocation() {
         return endLocation;
     }
 
-    public void setEndLocation(Location endLocation) {
+    public void setEndLocation(MLocation endLocation) {
         this.endLocation = endLocation;
     }
 
+    @Exclude
     public Polyline getPl() {
         return pl;
     }

@@ -8,18 +8,14 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-
-import android.view.View;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -33,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
 
+import dreamteam.pthfndr.models.MLocation;
 import dreamteam.pthfndr.models.Path;
 import dreamteam.pthfndr.models.Trip;
 
@@ -51,7 +48,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .width(5)
                     .color(Color.DKGRAY)
             );
-            trip.paths.add(new Path(new Location("Test"), l, Color.DKGRAY, (int) ((System.currentTimeMillis() - time) / 1000)));
+            trip.paths.add(new Path(new MLocation(location.getSpeed(), new LatLng(latitude, longitude)), new MLocation(location.getSpeed(), new LatLng(latitudeNew, longitudeNew)), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
             trip.end_trip();
             longitude = location.getLongitude();
             latitude = location.getLatitude();

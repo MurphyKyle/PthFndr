@@ -79,10 +79,10 @@ public class Trip implements Comparable<Trip>, Parcelable {
 
     public float getDistance() {
         float currentDistance = 0;
-        Path currentPath = getPaths().get(0);
-        for (int i = 1; i < getPaths().size() - 1; i++) {
-            currentDistance += currentPath.getEndLocation().distanceTo(getPaths().get(i).getEndLocation());
-        }
+//        Path currentPath = getPaths().get(0);
+//        for (int i = 1; i < getPaths().size() - 1; i++) {
+//            currentDistance += currentPath.getEndLocation().distanceTo(getPaths().get(i).getEndLocation());
+//        }
         return currentDistance;
     }
 
