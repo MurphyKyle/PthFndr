@@ -8,16 +8,24 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+
+import android.view.View;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
-
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DatabaseReference;
@@ -65,6 +73,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     };
     private boolean mLocationPermissionGranted;
+
+    private Location mLastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,5 +137,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void signOut(View view) {
         Intent i = new Intent(this, ProfileActivity.class);
         startActivity(i);
+    }
+
+    public void onLocationChanged(Location location) {
+        mLastLocation = location;
+        Log.d("aaaaaaaa===>", "" + location.getLatitude() + "\n" + location.getLongitude());
+        mMap.clear();
+        final LatLng loc = new LatLng(location.getLongitude(), location.getLongitude());
+
+        Marker ham = mMap.addMarker(new MarkerOptions().position(loc).title("This is Me"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
     }
 }
