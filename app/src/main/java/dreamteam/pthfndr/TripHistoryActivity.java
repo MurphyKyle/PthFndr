@@ -22,25 +22,29 @@ import dreamteam.pthfndr.models.User;
 public class TripHistoryActivity extends AppCompatActivity {
 	
 	private User theUser;
-	private TextView txtDate = findViewById(R.id.txtDate);
-	private TextView txtTime = findViewById(R.id.txtTime);
-	private TextView txtDistance = findViewById(R.id.txtDistance);
-	private TextView txtMaxSpeed = findViewById(R.id.txtMaxSpeed);
-	private TextView txtAverageSpeed = findViewById(R.id.txtAverageSpeed);
-	private ScrollView tripListView = findViewById(R.id.tripListView);
+	private TextView txtDate;
+	private TextView txtTime;
+	private TextView txtDistance;
+	private TextView txtMaxSpeed;
+	private TextView txtAverageSpeed;
+	private ScrollView tripListView;
 	
 	private ArrayList<Trip> activeTrips = new ArrayList<>();
 	
 	@Override
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
+		// set the view
+		setContentView(R.layout.activity_trip_history);
+		// set the view children
+		setViewObjects();
 		
 		// ignoring what the parcel is actually called..
 		if (getIntent().getExtras() != null) {
 			
 			String[] keys = getIntent().getExtras().keySet().toArray(new String[1]);
 			// ..get the user - we should only get the user's data into the activity, nothing else
-			setTheUser(getIntent().getExtras().getParcelable(keys[0]));
+			setTheUser( getIntent().getExtras().getParcelable(keys[0]) );
 			ArrayList<Trip> trips = getTheUser().getTrips();
 			
 			if (trips.size() > 0) {
@@ -51,6 +55,15 @@ public class TripHistoryActivity extends AppCompatActivity {
 				setEmptyTripList();
 			}
 		}
+	}
+	
+	private void setViewObjects() {
+		txtDate = findViewById(R.id.txtDate);
+		txtTime = findViewById(R.id.txtTime);
+		txtDistance = findViewById(R.id.txtDistance);
+		txtMaxSpeed = findViewById(R.id.txtMaxSpeed);
+		txtAverageSpeed = findViewById(R.id.txtAverageSpeed);
+		tripListView = findViewById(R.id.tripListView);
 	}
 	
 	/**
@@ -232,6 +245,8 @@ public class TripHistoryActivity extends AppCompatActivity {
 	private void setEmptyTripList() {
 		TextView tv = new TextView(this);
 		tv.setText(R.string.noTripsToView);
+		tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+		tv.setTextSize(26.0f);
 		getTripListView().addView(tv);
 	}
 	
