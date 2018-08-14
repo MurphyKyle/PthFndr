@@ -2,13 +2,15 @@ package dreamteam.pthfndr.models;
 
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.ButtCap;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class Path {
+public class Path implements Parcelable {
     private Location endLocation;
     private Polyline pl;
     private int color;
@@ -23,6 +25,24 @@ public class Path {
         setColor(c);
         setSeconds(timePassed);
     }
+
+    protected Path(Parcel in) {
+        endLocation = in.readParcelable(Location.class.getClassLoader());
+        color = in.readInt();
+        seconds = in.readInt();
+    }
+
+    public static final Creator<Path> CREATOR = new Creator<Path>() {
+        @Override
+        public Path createFromParcel(Parcel in) {
+            return new Path(in);
+        }
+
+        @Override
+        public Path[] newArray(int size) {
+            return new Path[size];
+        }
+    };
 
     public float get_speed() {
         return getEndLocation().getSpeed() * 3.6F;
@@ -58,5 +78,18 @@ public class Path {
 
     public void setSeconds(int seconds) {
         this.seconds = seconds;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(color);
+        parcel.writeInt(seconds);
+        parcel.writeValue(endLocation);
+        parcel.writeValue(pl);
     }
 }

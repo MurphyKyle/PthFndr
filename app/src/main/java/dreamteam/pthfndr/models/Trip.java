@@ -19,7 +19,7 @@ public class Trip implements Comparable<Trip>, Parcelable {
 
     private float averageSpeed;
     private float distance;
-    private double time;//in seconds
+    private float time;//in seconds
     private Time timeObj;
     private Date date;
     private float maxSpeed = 0;
@@ -47,7 +47,7 @@ public class Trip implements Comparable<Trip>, Parcelable {
     public Trip(Parcel in){
         averageSpeed = in.readFloat();
         distance = in.readFloat();
-        time = in.readDouble();
+        time = in.readFloat();
         maxSpeed = in.readFloat();
         tStart = in.readLong();
     }
@@ -103,7 +103,7 @@ public class Trip implements Comparable<Trip>, Parcelable {
     }
 
     public void setTime(double time) {
-        this.time = time;
+        this.time = (float)time;
     }
 
     public Date getDate() {
@@ -163,7 +163,13 @@ public class Trip implements Comparable<Trip>, Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-
+        parcel.writeFloat(averageSpeed);
+        parcel.writeFloat(distance);
+        parcel.writeFloat(time);
+        parcel.writeValue(timeObj);
+        parcel.writeValue(date);
+        parcel.writeFloat(maxSpeed);
+        parcel.writeLong(tStart);
     }
 
     public static class Comparators {
