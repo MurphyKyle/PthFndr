@@ -2,6 +2,7 @@ package dreamteam.pthfndr.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.Contacts;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -41,6 +42,9 @@ public class User  implements Parcelable{
     }
     private User(Parcel in) {
         mData = in.readInt();
+        UID = in.readString();
+        Name = in.readString();
+
     }
 
     public void add_trip(Trip t){
@@ -86,5 +90,9 @@ public class User  implements Parcelable{
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(mData);
+        parcel.writeString(UID);
+        parcel.writeString(Name);
+        parcel.writeList(Trips);
+
     }
 }

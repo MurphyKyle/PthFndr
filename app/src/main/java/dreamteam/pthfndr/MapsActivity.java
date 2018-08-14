@@ -48,7 +48,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .width(5)
                     .color(Color.DKGRAY)
             );
-            trip.paths.add(new Path(new MLocation(location.getSpeed(), new LatLng(location.getLatitude(), location.getLongitude())), new MLocation(location.getSpeed(), new LatLng(latitudeNew, longitudeNew)), l, Color.DKGRAY, (int) ((System.currentTimeMillis() - time) / 1000)));
+            trip.paths.add(new Path(new MLocation(location.getSpeed(), new LatLng(latitude, longitude)), new MLocation(location.getSpeed(), new LatLng(latitudeNew, longitudeNew)), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
             trip.end_trip();
             longitude = location.getLongitude();
             latitude = location.getLatitude();

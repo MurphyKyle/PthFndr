@@ -1,25 +1,48 @@
 package dreamteam.pthfndr.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.android.gms.maps.model.Polyline;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class Path {
-    private MLocation endLocation;
-    private MLocation startLocation;
-    @Exclude
+public class Path implements Parcelable {
+    public static final Creator<Path> CREATOR = new Creator<Path>() {
+        @Override
+        public Path createFromParcel(Parcel in) {
+            return new Path(in);
+        }
+
+        @Override
+        public Path[] newArray(int size) {
+            return new Path[size];
+        }
+    };
     private Polyline pl;
     private int color;
     private int seconds;
+    private MLocation endLocation;
+    private MLocation startLocation;
+
     public Path() {
     }
+
     public Path(MLocation sl, MLocation el, Polyline p, int c, int timePassed) {
         setStartLocation(sl);
         setEndLocation(el);
         setPl(p);
         setColor(c);
         setSeconds(timePassed);
+    }
+
+    protected Path(Parcel in) {
+        endLocation = (MLocation) in.readValue(getClass().getClassLoader());
+        startLocation = (MLocation) in.readValue(getClass().getClassLoader());
+        pl = (Polyline) in.readValue(getClass().getClassLoader());
+        color = in.readInt();
+        seconds = in.readInt();
     }
 
     public MLocation getStartLocation() {
@@ -65,5 +88,18 @@ public class Path {
 
     public void setSeconds(int seconds) {
         this.seconds = seconds;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(color);
+        parcel.writeInt(seconds);
+        parcel.writeValue(endLocation);
+        parcel.writeValue(pl);
     }
 }

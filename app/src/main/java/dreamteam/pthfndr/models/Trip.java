@@ -1,5 +1,7 @@
 package dreamteam.pthfndr.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.ViewDebug;
 
 import com.google.firebase.database.Exclude;
@@ -11,17 +13,28 @@ import java.util.Comparator;
 import java.util.Date;
 
 @IgnoreExtraProperties
-public class Trip implements Comparable<Trip> {
+public class Trip implements Comparable<Trip>, Parcelable {
 
     public ArrayList<Path> paths = new ArrayList<>();
 
     private float averageSpeed;
     private float distance;
-    private double time;//in seconds
+    private float time;//in seconds
     private Time timeObj;
     private Date date;
     private float maxSpeed = 0;
     private long tStart;
+
+    public static final Parcelable.Creator<Trip> CREATOR
+            = new Parcelable.Creator<Trip>() {
+        public Trip createFromParcel(Parcel in) {
+            return new Trip(in);
+        }
+
+        public Trip[] newArray(int size) {
+            return new Trip[size];
+        }
+    };
 
     public Trip() {
     }
@@ -29,6 +42,14 @@ public class Trip implements Comparable<Trip> {
     public Trip(Date startDate) {
         setStart(System.currentTimeMillis());
         setDate(startDate);
+    }
+
+    public Trip(Parcel in){
+        averageSpeed = in.readFloat();
+        distance = in.readFloat();
+        time = in.readFloat();
+        maxSpeed = in.readFloat();
+        tStart = in.readLong();
     }
 
     public void end_trip() {
@@ -82,7 +103,7 @@ public class Trip implements Comparable<Trip> {
     }
 
     public void setTime(double time) {
-        this.time = time;
+        this.time = (float)time;
     }
 
     public Date getDate() {
@@ -134,11 +155,27 @@ public class Trip implements Comparable<Trip> {
     public int compareTo(Trip other) {
         return Comparators.DATE.compare(this, other);
     }
-    
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeFloat(averageSpeed);
+        parcel.writeFloat(distance);
+        parcel.writeFloat(time);
+        parcel.writeValue(timeObj);
+        parcel.writeValue(date);
+        parcel.writeFloat(maxSpeed);
+        parcel.writeLong(tStart);
+    }
+
     public static class Comparators {
         
         public static Comparator<Trip> DATE = (o1, o2) -> o1.date.compareTo(o2.date);
-        
+
         public static Comparator<Trip> MAXSPEED = (o1, o2) -> Float.compare(o1.maxSpeed, o2.maxSpeed);
     }
 }
