@@ -16,6 +16,9 @@ import java.util.Date;
 import dreamteam.pthfndr.models.Trip;
 import dreamteam.pthfndr.models.User;
 
+/**
+ * Lists the user's trips and aggregates the selected trip's info to the view
+ */
 public class TripHistoryActivity extends AppCompatActivity {
 	
 	private User theUser;
@@ -50,6 +53,10 @@ public class TripHistoryActivity extends AppCompatActivity {
 		}
 	}
 	
+	/**
+	 * Starts a new MapActivity sending in the requested trips to be drawn as intent extras
+	 * @param view the view containing the button caller
+	 */
 	public void viewMapOnClick(View view) {
 		// view the selected data on the map
 		Intent tent = new Intent(this, MapsActivity.class);
@@ -57,6 +64,10 @@ public class TripHistoryActivity extends AppCompatActivity {
 		startActivity(tent);
 	}
 	
+	/**
+	 * Updates the view with the selected/de-selected trip
+	 * @param view the view containing the button caller
+	 */
 	public void setAddTripData(View view) {
 		// get the calling button
 		ToggleButton tog = (ToggleButton) view.getRootView();
@@ -90,6 +101,9 @@ public class TripHistoryActivity extends AppCompatActivity {
 		}
 	}
 	
+	/**
+	 * Resets the TextViews in the activity
+	 */
 	private void resetView() {
 		getTxtAverageSpeed().setText("");
 		getTxtMaxSpeed().setText("");
@@ -98,6 +112,10 @@ public class TripHistoryActivity extends AppCompatActivity {
 		getTxtTime().setText("");
 	}
 	
+	/**
+	 * Updates the view with the currently selected trips
+	 * @param size the current number of trips selected
+	 */
 	private void setActiveTripDatesToView(int size) {
 		// get trips
 		ArrayList<Trip> trips = getActiveTrips();
@@ -119,6 +137,10 @@ public class TripHistoryActivity extends AppCompatActivity {
 		}
 	}
 	
+	/**
+	 * Sets the view using the data from the single trip
+	 * @param trip the Trip to set the view with
+	 */
 	private void setFirstTripData(Trip trip) {
 		getTxtDate().setText(trip.getDate().toString());
 		String timeString = formatTimeString((String)trip.getTimeObj(false));
@@ -128,11 +150,20 @@ public class TripHistoryActivity extends AppCompatActivity {
 		getTxtAverageSpeed().setText(String.valueOf(trip.getAverageSpeed()));
 	}
 	
+	/**
+	 *
+	 * @param timeObjString string representation of a time object in "hh:mm:ss" format
+	 * @return "# Hr # Min # Sec" representation of the time for the view
+	 */
 	private String formatTimeString(String timeObjString) {
 		String[] hms = timeObjString.split(":");
 		return String.format("%1$s Hr %2$s Min %3$s Sec", hms[0], hms[1], hms[2]);
 	}
 	
+	/**
+	 * Adds the given trip data to the view
+	 * @param trip the Trip to add to the view
+	 */
 	private void addTripUpdateToView(Trip trip) {
 		// distance
 		TextView txtDistance = getTxtDistance();
@@ -153,6 +184,10 @@ public class TripHistoryActivity extends AppCompatActivity {
 		txtTime.setText(formatTimeString(newTime.toString()));
 	}
 	
+	/**
+	 * Subtracts the given trip data from the view
+	 * @param trip the Trip to subtract from the view
+	 */
 	private void subtractTripUpdateToView(Trip trip) {
 		// distance
 		TextView txtDistance = getTxtDistance();
@@ -173,6 +208,11 @@ public class TripHistoryActivity extends AppCompatActivity {
 		txtTime.setText(formatTimeString(newTime.toString()));
 	}
 	
+	/**
+	 * Converts time from the view format to standard format
+	 * @param viewFormat time in the view format: "# Hr # Min # Sec"
+	 * @return time in "hh:mm:ss" format
+	 */
 	private String getJDBCTimeFormat(String viewFormat) {
 		// where viewFormat == "%1$s Hr %2$s Min %3$s Sec"
 		// return as hh:mm:ss
@@ -186,12 +226,19 @@ public class TripHistoryActivity extends AppCompatActivity {
 		return viewFormat;
 	}
 	
+	/**
+	 * Updates the view to notify the user that there are no trips to view
+	 */
 	private void setEmptyTripList() {
 		TextView tv = new TextView(this);
 		tv.setText(R.string.noTripsToView);
 		getTripListView().addView(tv);
 	}
 	
+	/**
+	 * Sets the TextView representing the max speed
+	 * @param size the current number of trips selected
+	 */
 	private void setActiveTripMaxSpeedToView(int size) {
 		ArrayList<Trip> trips = getActiveTrips();
 		
@@ -203,6 +250,10 @@ public class TripHistoryActivity extends AppCompatActivity {
 		}
 	}
 	
+	/**
+	 * Sets the TextView representing the average speed
+	 * @param size the current number of trips selected
+	 */
 	private void setActiveTripAverageSpeedToView(int size) {
 		ArrayList<Trip> trips = getActiveTrips();
 		if (size > 1) {
@@ -218,6 +269,10 @@ public class TripHistoryActivity extends AppCompatActivity {
 		}
 	}
 	
+	/**
+	 * Fills the trips list view with toggle buttons representing each trip
+	 * @param trips the list of trips to use
+	 */
 	private void buildTripList(ArrayList<Trip> trips) {
 		for (Trip t : trips) {
 			ToggleButton tog = new ToggleButton(this);
@@ -231,6 +286,11 @@ public class TripHistoryActivity extends AppCompatActivity {
 			getTripListView().addView(tog);
 		}
 	}
+	
+	
+	/*
+	Getters and Setters
+	*/
 	
 	public User getTheUser() {
 		return theUser;
