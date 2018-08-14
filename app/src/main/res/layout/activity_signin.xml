@@ -11,5 +11,5 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="173dp"
         android:onClick="signIn"
-        android:text="@string/signin" />
+        android:text="@string/btn_sign_in" />
 </RelativeLayout>

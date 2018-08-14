@@ -106,8 +106,8 @@ public class SigninActivity extends AppCompatActivity {
     private Trip randomTrip(){
 
         Trip trip = new Trip();
-        trip.setAverageSpeed(generateRandomDouble(100));
-        trip.setDistance(generateRandomDouble(1000));
+        trip.setAverageSpeed(generateRandomFloat(100));
+        trip.setDistance(generateRandomFloat(1000));
         trip.setMaxSpeed(generateRandomFloat(200));
         trip.setTime(generateRandomDouble(100));
         trip.paths.add(new Path(new Location("bye"), null, (int)generateRandomDouble(100), new Random().nextInt(100)));
