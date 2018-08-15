@@ -28,9 +28,9 @@ public class User  implements Parcelable{
     };
 
 
-    private String Name;
+    private String Name = "no name";
     @Exclude
-    private String UID;
+    private String UID = "no uid";
     private ArrayList<Trip> Trips = new ArrayList<>();
 
     public User(String name, String ID){

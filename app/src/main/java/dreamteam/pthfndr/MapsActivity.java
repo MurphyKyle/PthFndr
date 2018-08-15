@@ -79,12 +79,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     };
     private boolean mLocationPermissionGranted;
+    private FirebaseUser user;
+    private DatabaseReference fDB;
 
     private Location mLastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        fDB = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
         setContentView(R.layout.activity_maps);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -94,7 +98,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        final DatabaseReference fDB = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
         fDB.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -106,16 +109,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        for (Trip t : currentUser.getTrips()) {
-            for (Path p : t.getPaths()) {
-                Polyline l = mMap.addPolyline(new PolylineOptions()
-                        .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
-                        .width(5)
-                        .color(Color.DKGRAY)
-                );
+        if (currentUser != null) {
+            for (Trip t : currentUser.getTrips()) {
+                for (Path p : t.getPaths()) {
+                    Polyline l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
+                            .width(5)
+                            .color(Color.DKGRAY)
+                    );
+                }
             }
         }
-
+    
         getLocationPermission();
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -196,14 +201,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateUser() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final DatabaseReference fDB = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
         fDB.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Map<String, Object> userValues = currentUser.toMap();
                 Map<String, Object> userUpdates = new HashMap<>();
-                userUpdates.put("/" + "", userValues);
+                userUpdates.put("/", userValues);
                 fDB.updateChildren(userUpdates);
             }
 

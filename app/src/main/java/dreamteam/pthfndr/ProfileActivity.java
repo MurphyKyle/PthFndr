@@ -20,8 +20,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.jar.Attributes;
 
 import dreamteam.pthfndr.models.User;
@@ -66,8 +71,10 @@ public class ProfileActivity extends AppCompatActivity {
                 user = dataSnapshot.getValue(User.class);
                 nameTextView.setText(user.getName());
                 Date date = new Date(authUser.getMetadata().getCreationTimestamp());
-                joinDateTextView.setText(date.toString());
-                totalTripsTextView.setText(user.getTrips().size());
+	            SimpleDateFormat df = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
+                joinDateTextView.setText(df.format(date));
+                int size = user.getTrips().size();
+                totalTripsTextView.setText(String.valueOf(size));
                 totalTimeTextView.setText(String.valueOf(getTotalTime(user)));
                 totalDistanceTextView.setText(String.valueOf(getTotalDistance(user)));
                 averageDistanceTextView.setText(String.valueOf(getAverageDistance(user)));

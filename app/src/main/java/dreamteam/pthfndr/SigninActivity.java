@@ -33,7 +33,7 @@ import dreamteam.pthfndr.models.User;
 public class SigninActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.GoogleBuilder().build(), new AuthUI.IdpConfig.EmailBuilder().build());
-    private  DatabaseReference fDB;
+    private DatabaseReference fDB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +61,7 @@ public class SigninActivity extends AppCompatActivity {
                             newUser.add_trip(randomTrip());
                             Map<String, Object> userValues = newUser.toMap();
                             Map<String, Object> userUpdates = new HashMap<>();
-                            userUpdates.put("/" + newUser.getUID() + "/", userValues);
+                            userUpdates.put("/" + newUser.getUID() + "/" , userValues);
                             fDB.updateChildren(userUpdates);
                         }
                     }

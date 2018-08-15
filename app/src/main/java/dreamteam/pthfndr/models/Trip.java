@@ -17,13 +17,13 @@ public class Trip implements Comparable<Trip>, Parcelable {
 
     public ArrayList<Path> paths = new ArrayList<>();
 
-    private float averageSpeed;
-    private float distance;
-    private float time;//in seconds
-    private Time timeObj;
-    private Date date;
-    private float maxSpeed = 0;
-    private long tStart;
+    private float averageSpeed = 0.0f;
+    private float distance = 0.0f;
+    private float time = 0.0f;//in seconds
+    private Date timeObj = null;
+    private Date date = null;
+    private float maxSpeed = 0.0f;
+    private long tStart = 0;
 
     public static final Parcelable.Creator<Trip> CREATOR
             = new Parcelable.Creator<Trip>() {
@@ -134,9 +134,6 @@ public class Trip implements Comparable<Trip>, Parcelable {
         this.timeObj = new Time(sysMillis);
     }
     
-    public void setTimeObj(Time timeObj) {
-        this.timeObj = timeObj;
-    }
     
     /**
      *
