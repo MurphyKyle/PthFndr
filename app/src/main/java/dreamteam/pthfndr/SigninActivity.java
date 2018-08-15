@@ -33,11 +33,12 @@ import dreamteam.pthfndr.models.User;
 public class SigninActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.GoogleBuilder().build(), new AuthUI.IdpConfig.EmailBuilder().build());
-
+    private  DatabaseReference fDB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         signIn(null);
+        fDB = FirebaseDatabase.getInstance().getReference().child("users");
         //setContentView(R.layout.activity_signin);
     }
 
@@ -47,7 +48,6 @@ public class SigninActivity extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK && data != null) {
-                final DatabaseReference fDB = FirebaseDatabase.getInstance().getReference().child("users");
                 fDB.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
