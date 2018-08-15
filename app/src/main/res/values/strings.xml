@@ -17,5 +17,7 @@
     <string name="btn_view_trips">View Trips</string>
     <string name="viewProfile">View Profile</string>
     <string name="noTripsToView">No trips to view</string>
+    <string name="startTrip">Start New Trip</string>
+    <string name="endTrip">End Trip</string>
     <string name="logo">pthfndr logo</string>
 </resources>

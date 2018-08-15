@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,16 +25,26 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import dreamteam.pthfndr.models.MLocation;
 import dreamteam.pthfndr.models.Path;
 import dreamteam.pthfndr.models.Trip;
 
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+    boolean isActive = false;
+    dreamteam.pthfndr.models.User currentUser;
     double latitude = 0;
     double longitude = 0;
     Trip trip = new Trip(Calendar.getInstance().getTime());
@@ -41,20 +52,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private final LocationListener locationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
-            double longitudeNew = location.getLongitude();
-            double latitudeNew = location.getLatitude();
-            Polyline l = mMap.addPolyline(new PolylineOptions()
-                    .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
-                    .width(5)
-                    .color(Color.DKGRAY)
-            );
-            trip.paths.add(new Path(new MLocation(location.getSpeed(), new LatLng(latitude, longitude)), new MLocation(location.getSpeed(), new LatLng(latitudeNew, longitudeNew)), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
-            trip.end_trip();
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
-            FirebaseDatabase fd = FirebaseDatabase.getInstance();
-            DatabaseReference ref = fd.getReference().child("TESTS");
-            ref.setValue(trip);
+            if (isActive) {
+                double longitudeNew = location.getLongitude();
+                double latitudeNew = location.getLatitude();
+                Polyline l = mMap.addPolyline(new PolylineOptions()
+                        .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                        .width(5)
+                        .color(Color.DKGRAY)
+                );
+                trip.paths.add(new Path(new MLocation(location.getSpeed(), new LatLng(latitude, longitude)), new MLocation(location.getSpeed(), new LatLng(latitudeNew, longitudeNew)), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+            }
         }
 
         @Override
@@ -84,6 +93,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference fDB = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+        fDB.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                currentUser = snapshot.getValue(dreamteam.pthfndr.models.User.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+        for (Trip t: currentUser.getTrips()) {
+            for(Path p : t.getPaths()){
+                Polyline l = mMap.addPolyline(new PolylineOptions()
+                        .add(new LatLng(p.getEndLocation().getPlace().latitude,p.getEndLocation().getPlace().longitude),new LatLng(p.getStartLocation().getPlace().latitude,p.getStartLocation().getPlace().longitude) )
+                        .width(5)
+                        .color(Color.DKGRAY)
+                );
+            }
+        }
 
         getLocationPermission();
 
@@ -144,5 +175,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Marker ham = mMap.addMarker(new MarkerOptions().position(loc).title("This is Me"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
+    }
+
+    public void manageTrip(View view){
+        isActive = isActive ? false : true;
+
+        Button b = findViewById(R.id.TripButton);
+        if (isActive) {
+            if(trip == null){
+                trip = new Trip();
+            }
+            b.setText(R.string.endTrip);
+        }else{
+            trip.end_trip();
+            currentUser.add_trip(trip);
+            trip = new Trip();
+            b.setText(R.string.startTrip);
+            updateUser();
+        }
+    }
+
+    private void updateUser() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference fDB = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+        fDB.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Map<String, Object> userValues = currentUser.toMap();
+                Map<String, Object> userUpdates = new HashMap<>();
+                userUpdates.put("/" + "", userValues);
+                fDB.updateChildren(userUpdates);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 }
