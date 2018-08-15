@@ -60,7 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .width(5)
                         .color(Color.DKGRAY)
                 );
-                trip.paths.add(new Path(new MLocation(location.getSpeed(), new LatLng(latitude, longitude)), new MLocation(location.getSpeed(), new LatLng(latitudeNew, longitudeNew)), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
+                trip.paths.add(new Path(new MLocation(location.getSpeed(), latitude, longitude), new MLocation(location.getSpeed(), latitudeNew, longitudeNew), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
             }
@@ -106,10 +106,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        for (Trip t: currentUser.getTrips()) {
-            for(Path p : t.getPaths()){
+        for (Trip t : currentUser.getTrips()) {
+            for (Path p : t.getPaths()) {
                 Polyline l = mMap.addPolyline(new PolylineOptions()
-                        .add(new LatLng(p.getEndLocation().getPlace().latitude,p.getEndLocation().getPlace().longitude),new LatLng(p.getStartLocation().getPlace().latitude,p.getStartLocation().getPlace().longitude) )
+                        .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
                         .width(5)
                         .color(Color.DKGRAY)
                 );
@@ -177,16 +177,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
     }
 
-    public void manageTrip(View view){
+    public void manageTrip(View view) {
         isActive = isActive ? false : true;
 
         Button b = findViewById(R.id.TripButton);
         if (isActive) {
-            if(trip == null){
+            if (trip == null) {
                 trip = new Trip();
             }
             b.setText(R.string.endTrip);
-        }else{
+        } else {
             trip.end_trip();
             currentUser.add_trip(trip);
             trip = new Trip();

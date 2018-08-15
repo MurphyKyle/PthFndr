@@ -1,26 +1,32 @@
 package dreamteam.pthfndr.models;
 
-import com.google.android.gms.maps.model.LatLng;
-
 public class MLocation {
-    private LatLng place;
+    private double latitude;
+    private double longitude;
     private float speed;
-
     public MLocation() {
 
     }
-
-    public MLocation(float s, LatLng p) {
-        place = p;
+    public MLocation(float s, double lat, double lng) {
+        latitude = lat;
+        longitude = lng;
         speed = s;
     }
 
-    public LatLng getPlace() {
-        return place;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setPlace(LatLng place) {
-        this.place = place;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public float getSpeed() {
