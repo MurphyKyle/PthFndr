@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -19,6 +20,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.jar.Attributes;
 
 import dreamteam.pthfndr.models.User;
@@ -28,12 +31,30 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseUser authUser;
     private DatabaseReference mUserReference;
     private User user;
+    TextView nameTextView;
+    TextView joinDateTextView;
+    TextView totalTripsTextView;
+    TextView totalTimeTextView;
+    TextView totalDistanceTextView;
+    TextView averageDistanceTextView;
+    TextView averageSpeedTextView;
+    TextView maxSpeedTextView;
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.activity_profile);
         authUser = FirebaseAuth.getInstance().getCurrentUser();
         mUserReference = FirebaseDatabase.getInstance().getReference().child("users").child(authUser.getUid());
+        nameTextView = findViewById(R.id.txtName);
+        joinDateTextView = findViewById(R.id.txtJoinDate);
+        totalTripsTextView = findViewById(R.id.txtTotalTrips);
+        totalTimeTextView = findViewById(R.id.txtTotalTime);
+        totalDistanceTextView = findViewById(R.id.txtTotalDistance);
+        averageDistanceTextView = findViewById(R.id.txtAverageDistance);
+        averageSpeedTextView = findViewById(R.id.txtAverageSpeedOverall);
+        maxSpeedTextView = findViewById(R.id.txtMaxSpeedOverall);
+
+        authUser.getMetadata().getCreationTimestamp();
     }
 
     @Override
@@ -43,7 +64,15 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
-
+                nameTextView.setText(user.getName());
+                Date date = new Date(authUser.getMetadata().getCreationTimestamp());
+                joinDateTextView.setText(date.toString());
+                totalTripsTextView.setText(user.getTrips().size());
+                totalTimeTextView.setText(String.valueOf(getTotalTime(user)));
+                totalDistanceTextView.setText(String.valueOf(getTotalDistance(user)));
+                averageDistanceTextView.setText(String.valueOf(getAverageDistance(user)));
+                maxSpeedTextView.setText(String.valueOf(getMaxSpeed(user)));
+                averageSpeedTextView.setText(String.valueOf(getAverageSpeed(user)));
             }
 
             @Override
@@ -73,10 +102,52 @@ public class ProfileActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Removes other Activities from stack
         startActivity(intent);
     }
-    // this method gets the current user from the database and sets the data inside of the user object
-    private User getUserFromDataBase(FirebaseUser authUser){
-        User user = new User();
 
-        return user;
+
+
+    private float getTotalTime(User user){
+        float result = 0f;
+        for(int i = 0; i < user.getTrips().size(); i++){
+            result += user.getTrips().get(i).getTime();
+        }
+        return result;
     }
+
+    private float getTotalDistance(User user){
+        float result = 0f;
+        for(int i = 0; i < user.getTrips().size(); i++){
+            result += user.getTrips().get(i).getDistance();
+        }
+        return result;
+    }
+
+    private float getAverageDistance(User user){
+        float totalDistance = 0f;
+        for(int i = 0; i < user.getTrips().size(); i++){
+            totalDistance += user.getTrips().get(i).getDistance();
+        }
+        float averageDistance = totalDistance/user.getTrips().size();
+
+        return averageDistance;
+    }
+
+    private float getMaxSpeed(User user){
+        float result = 0f;
+        for(int i = 0; i < user.getTrips().size(); i++){
+            if(user.getTrips().get(i).getMaxSpeed() > result){
+                result = user.getTrips().get(i).getMaxSpeed();
+            }
+        }
+        return result;
+    }
+
+    private float getAverageSpeed(User user){
+        float speed = 0f;
+        for(int i = 0; i < user.getTrips().size(); i++){
+            speed += user.getTrips().get(i).getAverageSpeed();
+        }
+        float result = speed / user.getTrips().size();
+        return result;
+    }
+
 }
