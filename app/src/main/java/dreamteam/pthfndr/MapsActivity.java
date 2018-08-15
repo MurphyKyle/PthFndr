@@ -9,12 +9,15 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,10 +44,10 @@ import dreamteam.pthfndr.models.MLocation;
 import dreamteam.pthfndr.models.Path;
 import dreamteam.pthfndr.models.Trip;
 
-
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     boolean isActive = false;
     dreamteam.pthfndr.models.User currentUser;
+    private static MapsActivity thisRef;
     double latitude = 0;
     double longitude = 0;
     Trip trip = new Trip(Calendar.getInstance().getTime());
@@ -79,7 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     };
     private boolean mLocationPermissionGranted;
-    private FirebaseUser user;
+    private FirebaseUser authUser;
     private DatabaseReference fDB;
 
     private Location mLastLocation;
@@ -87,21 +90,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        fDB = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+        authUser = FirebaseAuth.getInstance().getCurrentUser();
+        fDB = FirebaseDatabase.getInstance().getReference().child("users");
         setContentView(R.layout.activity_maps);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        thisRef = this;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         fDB.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                currentUser = snapshot.getValue(dreamteam.pthfndr.models.User.class);
+                currentUser = snapshot.child(authUser.getUid()).getValue(dreamteam.pthfndr.models.User.class);
             }
 
             @Override
@@ -192,8 +195,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             b.setText(R.string.endTrip);
         } else {
-            trip.end_trip();
-            currentUser.add_trip(trip);
+            trip.endTrip();
+            currentUser.addTrip(trip);
             trip = new Trip();
             b.setText(R.string.startTrip);
             updateUser();
@@ -201,14 +204,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateUser() {
-        final DatabaseReference fDB = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
         fDB.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Map<String, Object> userValues = currentUser.toMap();
                 Map<String, Object> userUpdates = new HashMap<>();
-                userUpdates.put("/", userValues);
-                fDB.updateChildren(userUpdates);
+                userUpdates.put(authUser.getUid(), userValues);
+                fDB.updateChildren(userUpdates, (databaseError, databaseReference) ->
+                                Toast.makeText(thisRef, "Trip Saved !", Toast.LENGTH_LONG).show());
             }
 
             @Override

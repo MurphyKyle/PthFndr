@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,14 +19,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.jar.Attributes;
 
 import dreamteam.pthfndr.models.User;
 
@@ -44,6 +38,7 @@ public class ProfileActivity extends AppCompatActivity {
     TextView averageDistanceTextView;
     TextView averageSpeedTextView;
     TextView maxSpeedTextView;
+    
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -58,8 +53,6 @@ public class ProfileActivity extends AppCompatActivity {
         averageDistanceTextView = findViewById(R.id.txtAverageDistance);
         averageSpeedTextView = findViewById(R.id.txtAverageSpeedOverall);
         maxSpeedTextView = findViewById(R.id.txtMaxSpeedOverall);
-
-        authUser.getMetadata().getCreationTimestamp();
     }
 
     @Override
@@ -104,13 +97,12 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void finalizeSignOut(){
+    	// this does not work properly?
         Intent intent = new Intent(this, SigninActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Removes other Activities from stack
         startActivity(intent);
     }
-
-
 
     private float getTotalTime(User user){
         float result = 0f;
@@ -131,6 +123,7 @@ public class ProfileActivity extends AppCompatActivity {
     private float getAverageDistance(User user){
         float totalDistance = 0f;
         for(int i = 0; i < user.getTrips().size(); i++){
+            // Trip.getDistance() will not do anything for us until it is fully implemented
             totalDistance += user.getTrips().get(i).getDistance();
         }
         float averageDistance = totalDistance/user.getTrips().size();

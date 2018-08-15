@@ -2,9 +2,7 @@ package dreamteam.pthfndr.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.view.ViewDebug;
 
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.sql.Time;
@@ -24,23 +22,15 @@ public class Trip implements Comparable<Trip>, Parcelable {
     private Date date = null;
     private float maxSpeed = 0.0f;
     private long tStart = 0;
-
-    public static final Parcelable.Creator<Trip> CREATOR
-            = new Parcelable.Creator<Trip>() {
-        public Trip createFromParcel(Parcel in) {
-            return new Trip(in);
-        }
-
-        public Trip[] newArray(int size) {
-            return new Trip[size];
-        }
-    };
-
+    
     public Trip() {
+        setTimeObj(System.currentTimeMillis());
+        setDate((Date) getTimeObj(false));
     }
 
     public Trip(Date startDate) {
         setStart(System.currentTimeMillis());
+        setTimeObj(getStart());
         setDate(startDate);
     }
 
@@ -48,41 +38,53 @@ public class Trip implements Comparable<Trip>, Parcelable {
         averageSpeed = in.readFloat();
         distance = in.readFloat();
         time = in.readFloat();
+        timeObj = new Time(in.readLong());
+        date = new Date(in.readLong());
         maxSpeed = in.readFloat();
         tStart = in.readLong();
+        in.readTypedList(paths, Path.CREATOR);
     }
 
-    public void end_trip() {
+    public void endTrip() {
         long tEnd = System.currentTimeMillis();
         long tDelta = tEnd - getStart();
         setTimeObj(tDelta);
-        setTime(tDelta / 1000.0);
+        setTime((float) (tDelta / 1000.0));
         setAverageSpeed(getAverageSpeed());
         setDistance(getDistance());
     }
 
     public float getAverageSpeed() {
         float avgSpeed = 0;
-        for (Path p : getPaths()) {
-            avgSpeed += p.get_speed();
-            if (p.get_speed() > getMaxSpeed()) {
-                setMaxSpeed(p.get_speed());
+        
+        // only calculate the average speed if there are paths saved
+        if (paths.size() > 0) {
+            for (Path p : getPaths()) {
+                avgSpeed += p.getSpeed();
+                if (p.getSpeed() > getMaxSpeed()) {
+                    setMaxSpeed(p.getSpeed());
+                }
             }
+            return avgSpeed / getPaths().size();
         }
-        return avgSpeed / getPaths().size();
+        // no paths to calculate
+        return 0;
     }
 
     public void setAverageSpeed(float averageSpeed) {
         this.averageSpeed = averageSpeed;
     }
-
-
+    
     public float getDistance() {
         float currentDistance = 0;
-//        Path currentPath = getPaths().get(0);
-//        for (int i = 1; i < getPaths().size() - 1; i++) {
-//            currentDistance += currentPath.getEndLocation().distanceTo(getPaths().get(i).getEndLocation());
-//        }
+    
+        if (paths.size() > 0) {
+            Path currentPath = getPaths().get(0);
+            
+            for (int i = 1; i < getPaths().size() - 1; i++) {
+                //currentDistance += currentPath.getEndLocation().distanceTo(getPaths().get(i).getEndLocation());
+            }
+        }
         return currentDistance;
     }
 
@@ -98,12 +100,12 @@ public class Trip implements Comparable<Trip>, Parcelable {
         this.paths = paths;
     }
 
-    public double getTime() {
+    public float getTime() {
         return time;
     }
 
-    public void setTime(double time) {
-        this.time = (float)time;
+    public void setTime(float time) {
+        this.time = time;
     }
 
     public Date getDate() {
@@ -134,7 +136,6 @@ public class Trip implements Comparable<Trip>, Parcelable {
         this.timeObj = new Time(sysMillis);
     }
     
-    
     /**
      *
      * @param giveStringValue Specify if you want the string representation
@@ -155,20 +156,32 @@ public class Trip implements Comparable<Trip>, Parcelable {
 
     @Override
     public int describeContents() {
-        return 0;
+        return this.hashCode();
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
+    public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeFloat(averageSpeed);
         parcel.writeFloat(distance);
         parcel.writeFloat(time);
-        parcel.writeValue(timeObj);
-        parcel.writeValue(date);
+        parcel.writeLong(timeObj.getTime());
+        parcel.writeLong(date.getTime());
         parcel.writeFloat(maxSpeed);
         parcel.writeLong(tStart);
+        parcel.writeTypedList(paths);
     }
-
+    
+    public static final Parcelable.Creator<Trip> CREATOR
+            = new Parcelable.Creator<Trip>() {
+        public Trip createFromParcel(Parcel in) {
+            return new Trip(in);
+        }
+        
+        public Trip[] newArray(int size) {
+            return new Trip[size];
+        }
+    };
+    
     public static class Comparators {
         
         public static Comparator<Trip> DATE = (o1, o2) -> o1.date.compareTo(o2.date);

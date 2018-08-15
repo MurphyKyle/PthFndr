@@ -127,7 +127,7 @@
         </LinearLayout>
     </GridLayout>
 
-    <ScrollView
+    <ListView
         android:id="@+id/tripListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

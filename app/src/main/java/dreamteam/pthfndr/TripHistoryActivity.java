@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -27,7 +28,7 @@ public class TripHistoryActivity extends AppCompatActivity {
 	private TextView txtDistance;
 	private TextView txtMaxSpeed;
 	private TextView txtAverageSpeed;
-	private ScrollView tripListView;
+	private ListView tripListView;
 	
 	private ArrayList<Trip> activeTrips = new ArrayList<>();
 	
@@ -298,7 +299,7 @@ public class TripHistoryActivity extends AppCompatActivity {
 			tog.setTag(t);
 //			tog.callOnClick(setAddTripData(tog)); // if listener doesn't work out
 			tog.setOnClickListener(this::setAddTripData);
-			getTripListView().addView(tog);
+			getTripListView().addFooterView(tog, t, true);
 		}
 	}
 	
@@ -335,7 +336,7 @@ public class TripHistoryActivity extends AppCompatActivity {
 		return txtAverageSpeed;
 	}
 	
-	public ScrollView getTripListView() {
+	public ListView getTripListView() {
 		return tripListView;
 	}
 	
