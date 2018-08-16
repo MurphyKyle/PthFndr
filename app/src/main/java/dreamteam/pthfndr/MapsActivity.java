@@ -61,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Polyline l = mMap.addPolyline(new PolylineOptions()
                         .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
                         .width(5)
-                        .color(Color.DKGRAY)
+                        .color(Color.BLUE)
                 );
                 trip.paths.add(new Path(new MLocation(location.getSpeed(), latitude, longitude), new MLocation(location.getSpeed(), latitudeNew, longitudeNew), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
                 longitude = location.getLongitude();
@@ -92,15 +92,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         authUser = FirebaseAuth.getInstance().getCurrentUser();
         fDB = FirebaseDatabase.getInstance().getReference().child("users");
-        setContentView(R.layout.activity_maps);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        thisRef = this;
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
         fDB.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -111,6 +102,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+        setContentView(R.layout.activity_maps);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+        thisRef = this;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
 
         if (currentUser != null) {
             for (Trip t : currentUser.getTrips()) {
@@ -135,8 +135,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        longitude = location.getLongitude();
         latitude = location.getLatitude();
+        longitude = location.getLongitude();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
 
         time = System.currentTimeMillis();
@@ -195,6 +195,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             b.setText(R.string.endTrip);
         } else {
+            mMap.clear();
+            for (Trip t : currentUser.getTrips()) {
+                for (Path p : t.getPaths()) {
+                    Polyline l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
+                            .width(5)
+                            .color(Color.DKGRAY)
+                    );
+                }
+            }
             trip.endTrip();
             currentUser.addTrip(trip);
             trip = new Trip();

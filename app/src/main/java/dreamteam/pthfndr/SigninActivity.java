@@ -107,7 +107,7 @@ public class SigninActivity extends AppCompatActivity {
         trip.setMaxSpeed(generateRandomFloat(200));
         trip.setTime(generateRandomFloat(100));
         trip.setTimeObj(System.currentTimeMillis());
-        trip.paths.add(new Path(new MLocation(0, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112)), new MLocation(0, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112)), null, (int) generateRandomDouble(100), new Random().nextInt(100)));
+        trip.paths.add(new Path(new MLocation(1, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112)), new MLocation(1, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112)), null, (int) generateRandomDouble(100), new Random().nextInt(100)));
         return trip;
     }
 
