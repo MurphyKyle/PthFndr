@@ -107,7 +107,7 @@ public class SigninActivity extends AppCompatActivity {
         trip.setMaxSpeed(generateRandomFloat(200));
         trip.setTime(generateRandomFloat(100));
         trip.setTimeObj(System.currentTimeMillis());
-        trip.paths.add(new Path(new MLocation(0, 0, 0), new MLocation(0,0, 0), null, (int) generateRandomDouble(100), new Random().nextInt(100)));
+        trip.paths.add(new Path(new MLocation(0, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112)), new MLocation(0, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112)), null, (int) generateRandomDouble(100), new Random().nextInt(100)));
         return trip;
     }
 
@@ -120,6 +120,13 @@ public class SigninActivity extends AppCompatActivity {
 
     private double generateRandomDouble(double max) {
         double leftLimit = 1D;
+        double rightLimit = max;
+        double generatedDouble = leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
+        return generatedDouble;
+    }
+
+    private double generateRandomDoubleFromRange(double min, double max) {
+        double leftLimit = min;
         double rightLimit = max;
         double generatedDouble = leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
         return generatedDouble;
