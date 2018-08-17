@@ -25,7 +25,7 @@ public class Trip implements Comparable<Trip>, Parcelable {
     
     public Trip() {
         setTimeObj(System.currentTimeMillis());
-        setDate((Date) getTimeObj(false));
+        //setDate((Date) getTimeObj(false));
     }
 
     public Trip(Date startDate) {

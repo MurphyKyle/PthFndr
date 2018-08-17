@@ -56,18 +56,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final LocationListener locationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
             if (isActive) {
+
                 double longitudeNew = location.getLongitude();
                 double latitudeNew = location.getLatitude();
+                int width = checkPaths(5, longitudeNew, latitudeNew);
                 Polyline l = mMap.addPolyline(new PolylineOptions()
                         .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
-                        .width(5)
+                        .width(width)
                         .color(Color.DKGRAY)
                 );
+
                 trip.paths.add(new Path(new MLocation(location.getSpeed(), latitude, longitude), new MLocation(location.getSpeed(), latitudeNew, longitudeNew), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
             }
         }
+
+        private int checkPaths(int i, double longitudeNew, double latitudeNew) {
+            for (Trip t : currentUser.getTrips()) {
+                for (Path p : t.getPaths()) {
+
+                    if (p.getEndLocation().getLatitude() >= (latitudeNew - .0004) && p.getEndLocation().getLatitude() >= (latitudeNew + .0004) ||
+                            p.getStartLocation().getLatitude() >= (latitudeNew - .0004) && p.getStartLocation().getLatitude() >= (latitudeNew + .0004)) {
+                        if (p.getEndLocation().getLongitude() >= (longitudeNew - .0004) && p.getEndLocation().getLongitude() >= (longitudeNew + .0004) ||
+                                p.getStartLocation().getLongitude() >= (longitudeNew - .0004) && p.getStartLocation().getLongitude() >= (longitudeNew + .0004))
+                        {
+                            i += 2;
+                            i = i > 15 ? 15 : i;
+                        }
+                    }
+                }
+            }
+            return i;
+        }
+
 
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {
@@ -81,6 +103,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void onProviderDisabled(String s) {
         }
     };
+
+
     private boolean mLocationPermissionGranted;
     private FirebaseUser authUser;
     private DatabaseReference fDB;
@@ -123,7 +147,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         }
-    
+
         getLocationPermission();
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -211,7 +235,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Map<String, Object> userUpdates = new HashMap<>();
                 userUpdates.put(authUser.getUid(), userValues);
                 fDB.updateChildren(userUpdates, (databaseError, databaseReference) ->
-                                Toast.makeText(thisRef, "Trip Saved !", Toast.LENGTH_LONG).show());
+                        Toast.makeText(thisRef, "Trip Saved !", Toast.LENGTH_LONG).show());
             }
 
             @Override
