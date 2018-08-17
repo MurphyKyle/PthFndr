@@ -53,11 +53,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (isActive) {
                 double longitudeNew = location.getLongitude();
                 double latitudeNew = location.getLatitude();
-                Polyline l = mMap.addPolyline(new PolylineOptions()
-                        .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
-                        .width(5)
-                        .color(Color.BLUE)
-                );
+                float currentSpeed = location.getSpeed() * 2.236936F;
+                if (currentSpeed <= 10) {
+                    Polyline l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(5)
+                            .color(Color.argb(255, 0, 255, 0))
+                    );
+                } else if (currentSpeed > 11 && currentSpeed <= 30) {
+                    Polyline l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(5)
+                            .color(Color.argb(255, 128, 255, 0))
+                    );
+                } else if (currentSpeed > 31 && currentSpeed <= 61) {
+                    Polyline l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(5)
+                            .color(Color.argb(255, 255, 255, 0))
+                    );
+                } else if (currentSpeed > 61 && currentSpeed <= 90) {
+                    Polyline l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(5)
+                            .color(Color.argb(255, 255, 163, 0))
+                    );
+                } else if (currentSpeed > 91) {
+                    Polyline l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(5)
+                            .color(Color.argb(255, 255, 0, 0))
+                    );
+                }
                 trip.paths.add(new Path(new MLocation(cLoc.getSpeed(), latitude, longitude), new MLocation(location.getSpeed(), latitudeNew, longitudeNew), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
                 cLoc = location;
                 longitude = location.getLongitude();
@@ -178,7 +205,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Polyline l = mMap.addPolyline(new PolylineOptions()
                             .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
                             .width(5)
-                            .color(Color.DKGRAY)
+                            .color(p.getPl().getColor())
                     );
                 }
             }
