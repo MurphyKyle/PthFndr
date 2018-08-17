@@ -78,7 +78,7 @@ public class Trip implements Comparable<Trip>, Parcelable {
             return avgSpeed / getPaths().size();
         }
         // no paths to calculate
-        return 0;
+        return avgSpeed;
     }
 
     public void setAverageSpeed(float averageSpeed) {
@@ -96,7 +96,7 @@ public class Trip implements Comparable<Trip>, Parcelable {
             double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             currentDistance += earthRadius * c;
         }
-        return currentDistance;
+        return currentDistance * 0.62137F;
     }
 
     public void setDistance(float distance) {

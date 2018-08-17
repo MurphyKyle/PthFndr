@@ -9,23 +9,17 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.SnapHelper;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,11 +39,12 @@ import dreamteam.pthfndr.models.Path;
 import dreamteam.pthfndr.models.Trip;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+    private static MapsActivity thisRef;
     boolean isActive = false;
     dreamteam.pthfndr.models.User currentUser;
-    private static MapsActivity thisRef;
     double latitude = 0;
     double longitude = 0;
+    Location cLoc;
     Trip trip = new Trip(Calendar.getInstance().getTime());
     long time = 0;
     private GoogleMap mMap;
@@ -63,7 +58,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .width(5)
                         .color(Color.BLUE)
                 );
-                trip.paths.add(new Path(new MLocation(location.getSpeed(), latitude, longitude), new MLocation(location.getSpeed(), latitudeNew, longitudeNew), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
+                trip.paths.add(new Path(new MLocation(cLoc.getSpeed(), latitude, longitude), new MLocation(location.getSpeed(), latitudeNew, longitudeNew), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
+                cLoc = location;
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
             }
@@ -85,23 +81,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FirebaseUser authUser;
     private DatabaseReference fDB;
 
-    private Location mLastLocation;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        String[] keys = getIntent().getExtras().keySet().toArray(new String[1]);
+        currentUser = getIntent().getExtras().getParcelable(keys[0]);
         super.onCreate(savedInstanceState);
         authUser = FirebaseAuth.getInstance().getCurrentUser();
         fDB = FirebaseDatabase.getInstance().getReference().child("users");
-        fDB.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                currentUser = snapshot.child(authUser.getUid()).getValue(dreamteam.pthfndr.models.User.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
         setContentView(R.layout.activity_maps);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -123,7 +109,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         }
-    
+
         getLocationPermission();
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -135,6 +121,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        cLoc = location;
         latitude = location.getLatitude();
         longitude = location.getLongitude();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
@@ -175,18 +162,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startActivity(i);
     }
 
-    public void onLocationChanged(Location location) {
-        mLastLocation = location;
-        Log.d("aaaaaaaa===>", "" + location.getLatitude() + "\n" + location.getLongitude());
-        mMap.clear();
-        final LatLng loc = new LatLng(location.getLongitude(), location.getLongitude());
-
-        Marker ham = mMap.addMarker(new MarkerOptions().position(loc).title("This is Me"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
-    }
-
     public void manageTrip(View view) {
-        isActive = isActive ? false : true;
+        isActive = !isActive;
 
         Button b = findViewById(R.id.TripButton);
         if (isActive) {
@@ -216,12 +193,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateUser() {
         fDB.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Map<String, Object> userValues = currentUser.toMap();
                 Map<String, Object> userUpdates = new HashMap<>();
                 userUpdates.put(authUser.getUid(), userValues);
                 fDB.updateChildren(userUpdates, (databaseError, databaseReference) ->
-                                Toast.makeText(thisRef, "Trip Saved !", Toast.LENGTH_LONG).show());
+                        Toast.makeText(thisRef, "Trip Saved!", Toast.LENGTH_LONG).show());
             }
 
             @Override

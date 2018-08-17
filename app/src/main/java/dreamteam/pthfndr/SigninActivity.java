@@ -31,6 +31,7 @@ public class SigninActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.GoogleBuilder().build(), new AuthUI.IdpConfig.EmailBuilder().build());
     private DatabaseReference fDB;
+    private User u;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +83,19 @@ public class SigninActivity extends AppCompatActivity {
 //                u.addTrip(t);
 //                fRef.child(u.getUID()).setValue(u);
 
+                fDB.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        u = snapshot.child(FirebaseAuth.getInstance().getUid()).getValue(dreamteam.pthfndr.models.User.class);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+
                 Intent i = new Intent(this, MapsActivity.class);
+                i.putExtra("user", u);
                 startActivity(i);
             } else {
                 try {

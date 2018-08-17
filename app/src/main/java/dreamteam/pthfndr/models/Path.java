@@ -9,14 +9,26 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class Path implements Parcelable {
-    
+
+    public static final Creator<Path> CREATOR = new Creator<Path>() {
+        @Override
+        public Path createFromParcel(Parcel in) {
+            return new Path(in);
+        }
+
+        @Override
+        public Path[] newArray(int size) {
+            return new Path[size];
+        }
+    };
     private Polyline pl;
     private int color;
     private int seconds;
     private MLocation endLocation;
     private MLocation startLocation;
 
-    public Path() { }
+    public Path() {
+    }
 
     public Path(MLocation sl, MLocation el, Polyline p, int c, int timePassed) {
         setStartLocation(sl);
@@ -43,7 +55,7 @@ public class Path implements Parcelable {
     }
 
     public float getSpeed() {
-        return getEndLocation().getSpeed() * 3.6F;
+        return getEndLocation().getSpeed() * 2.236936F;
     }
 
     public MLocation getEndLocation() {
@@ -92,17 +104,5 @@ public class Path implements Parcelable {
         parcel.writeValue(endLocation);
         parcel.writeValue(startLocation);
     }
-    
-    public static final Creator<Path> CREATOR = new Creator<Path>() {
-        @Override
-        public Path createFromParcel(Parcel in) {
-            return new Path(in);
-        }
-        
-        @Override
-        public Path[] newArray(int size) {
-            return new Path[size];
-        }
-    };
-    
+
 }

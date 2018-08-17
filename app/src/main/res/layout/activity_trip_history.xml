@@ -1,129 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/AppTheme"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:theme="@style/AppTheme">
 
     <GridLayout
         android:id="@+id/infoGridView"
-        android:layout_marginStart="5dp"
-        android:padding="10dp"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
         android:columnCount="2"
+        android:orientation="vertical"
+        android:padding="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:layout_row="0"
-            android:layout_column="0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_column="0"
             android:layout_marginEnd="5dp"
-            >
+            android:layout_row="0"
+            android:orientation="vertical">
+
             <TextView
                 android:id="@+id/lblDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/lbl_date"
                 android:layout_marginBottom="5dp"
-                android:textAlignment="textEnd"
-                />
+                android:text="@string/lbl_date"
+                android:textAlignment="textEnd" />
+
             <TextView
                 android:id="@+id/lblTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/lbl_time"
                 android:layout_marginBottom="5dp"
-                android:textAlignment="textEnd"
-                />
+                android:text="@string/lbl_time"
+                android:textAlignment="textEnd" />
+
             <TextView
                 android:id="@+id/lblDistance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/lbl_distance"
                 android:layout_marginBottom="5dp"
-                android:textAlignment="textEnd"
-                />
+                android:text="@string/lbl_distance"
+                android:textAlignment="textEnd" />
+
             <TextView
                 android:id="@+id/lblMaxSpeed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/lbl_max_speed"
                 android:layout_marginBottom="5dp"
-                android:textAlignment="textEnd"
-                />
+                android:text="@string/lbl_max_speed"
+                android:textAlignment="textEnd" />
+
             <TextView
                 android:id="@+id/lblAverageSpeed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/lbl_average_speed"
                 android:textAlignment="textEnd"
-                app:layout_constraintTop_toBottomOf="@id/txtMaxSpeed"
                 app:layout_constraintLeft_toLeftOf="parent"
-                />
+                app:layout_constraintTop_toBottomOf="@id/txtMaxSpeed" />
         </LinearLayout>
 
         <Button
             android:id="@+id/btnViewTripMap"
-            android:text="@string/btn_view_map"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
             android:layout_columnSpan="2"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="5dp"
             android:onClick="viewMapOnClick"
-            app:layout_constraintTop_toBottomOf="@id/txtAverageSpeed"
-            />
+            android:text="@string/btn_view_map"
+            app:layout_constraintTop_toBottomOf="@id/txtAverageSpeed" />
 
         <!-- Column 2 Stores The Values -->
         <LinearLayout
-            android:layout_row="0"
-            android:layout_column="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:layout_column="1"
+            android:layout_row="0"
+            android:orientation="vertical">
+
             <TextView
                 android:id="@+id/txtDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp"
-                />
+                android:layout_marginStart="5dp" />
+
             <TextView
                 android:id="@+id/txtTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp"
-                />
+                android:layout_marginStart="5dp" />
+
             <TextView
                 android:id="@+id/txtDistance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp"
-                />
+                android:layout_marginStart="5dp" />
+
             <TextView
                 android:id="@+id/txtMaxSpeed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp"
-                />
+                android:layout_marginStart="5dp" />
+
             <TextView
                 android:id="@+id/txtAverageSpeed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp"
-                />
+                android:layout_marginStart="5dp" />
         </LinearLayout>
     </GridLayout>
 
@@ -132,8 +128,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        app:layout_constraintTop_toBottomOf="@id/infoGridView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        />
+        app:layout_constraintTop_toBottomOf="@id/infoGridView" />
 </android.support.constraint.ConstraintLayout>
