@@ -8,20 +8,12 @@ import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
+import dreamteam.pthfndr.models.FirebaseAccessor;
 import dreamteam.pthfndr.models.MLocation;
 import dreamteam.pthfndr.models.Path;
 import dreamteam.pthfndr.models.Trip;
@@ -30,59 +22,39 @@ import dreamteam.pthfndr.models.User;
 public class SigninActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.GoogleBuilder().build(), new AuthUI.IdpConfig.EmailBuilder().build());
-    private DatabaseReference fDB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FirebaseAccessor.setFireBaseResources();
         super.onCreate(savedInstanceState);
         signIn(null);
-        fDB = FirebaseDatabase.getInstance().getReference().child("users");
-        //setContentView(R.layout.activity_signin);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
+            // i think i'm logged in if i get to this line
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK && data != null) {
-                fDB.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        if (!snapshot.child(user.getUid()).exists()) {
-                            User newUser = new User();
-                            newUser.setName(user.getDisplayName());
-                            newUser.setUID(user.getUid());
-                            newUser.addTrip(randomTrip());
-                            newUser.addTrip(randomTrip());
-                            newUser.addTrip(randomTrip());
-                            Map<String, Object> userValues = newUser.toMap();
-                            Map<String, Object> userUpdates = new HashMap<>();
-                            userUpdates.put("/" + newUser.getUID() + "/" , userValues);
-                            fDB.updateChildren(userUpdates);
-                        }
+                // try to get the FirebaseAccess user
+                User newUser = null;
+                if (FirebaseAccessor.getUserModel() == null) {
+                    // no current user in the db
+                    newUser = new User();
+                    
+                    newUser.addTrip(randomTrip());
+                    newUser.addTrip(randomTrip());
+                    newUser.addTrip(randomTrip());
+                    
+                    // create a new user in the pthfndr database
+                    if (FirebaseAccessor.createUserModel(newUser)) {
+                        //Toast.makeText(getApplicationContext(), "New User Saved!", Toast.LENGTH_LONG).show();
                     }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
-                //This code adds trips to the user for test data
-//                            newUser.addTrip(randomTrip());
-//                            newUser.addTrip(randomTrip());
-//                            newUser.addTrip(randomTrip());
-
-
-//                User u = new User(user.getDisplayName(), user.getUid());
-//                Trip t = new Trip(null);
-//                t.paths.add(new Path(new Location("bye"), null, null, 50));
-//                u.addTrip(t);
-//                u.addTrip(t);
-//                u.addTrip(t);
-//                u.addTrip(t);
-//                fRef.child(u.getUID()).setValue(u);
+                }
 
                 Intent i = new Intent(this, MapsActivity.class);
+                i.putExtra("user", newUser);
                 startActivity(i);
             } else {
                 try {
@@ -97,16 +69,18 @@ public class SigninActivity extends AppCompatActivity {
     public void signIn(View view) {
         startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
                 .setLogo(R.drawable.pth_fndr_logo1png)
-                .setTheme(R.style.Theme_AppCompat_DayNight_NoActionBar).setAvailableProviders(providers).build(), RC_SIGN_IN);
+                .setTheme(R.style.Theme_AppCompat_DayNight_NoActionBar)
+                .setAvailableProviders(providers)
+                .build().setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), RC_SIGN_IN);
     }
 
     private Trip randomTrip() {
         Trip trip = new Trip();
+        trip.setDateMilis(System.currentTimeMillis());
         trip.setAverageSpeed(generateRandomFloat(100));
         trip.setDistance(generateRandomFloat(1000));
         trip.setMaxSpeed(generateRandomFloat(200));
         trip.setTime(generateRandomFloat(100));
-        trip.setTimeObj(System.currentTimeMillis());
         trip.paths.add(new Path(new MLocation(0, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112)), new MLocation(0, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112)), null, (int) generateRandomDouble(100), new Random().nextInt(100)));
         return trip;
     }

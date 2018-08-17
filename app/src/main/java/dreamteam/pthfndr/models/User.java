@@ -13,9 +13,11 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class User implements Parcelable{
 
-    private String Name = "no name";
+    @Exclude
+    public static final String DEFAULT_NAME = "no name";
     @Exclude
     private String UID = "no uid";
+    private String Name = DEFAULT_NAME;
     private ArrayList<Trip> Trips = new ArrayList<>();
     
     public User() { }

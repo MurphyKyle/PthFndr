@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -157,8 +156,8 @@ public class TripHistoryActivity extends AppCompatActivity {
 	 */
 	private void setFirstTripData(Trip trip) {
 		getTxtDate().setText(trip.getDate().toString());
-		String timeString = formatTimeString((String)trip.getTimeObj(false));
-		getTxtTime().setText(timeString);
+//		String timeString = formatTimeString((String)trip.getTimeObj(false));
+//		getTxtTime().setText(timeString);
 		getTxtDistance().setText(String.valueOf(trip.getDistance()));
 		getTxtMaxSpeed().setText(String.valueOf(trip.getMaxSpeed()));
 		getTxtAverageSpeed().setText(String.valueOf(trip.getAverageSpeed()));
@@ -187,15 +186,15 @@ public class TripHistoryActivity extends AppCompatActivity {
 		// time
 		TextView txtTime = getTxtTime();
 		// get in hh:mm:ss
-		Date tripTime = (Time) trip.getTimeObj(true);
+//		Date tripTime = (Time) trip.getTimeObj(true);
 		
 		// get time obj from view
 		Date oldTime = Time.valueOf(getJDBCTimeFormat(txtTime.getText().toString()));
-		long newMilis = oldTime.getTime() + tripTime.getTime();
+//		long newMilis = oldTime.getTime() + tripTime.getTime();
 		
 		// create the new time to display to view
-		Time newTime = new Time(newMilis);
-		txtTime.setText(formatTimeString(newTime.toString()));
+//		Time newTime = new Time(newMilis);
+//		txtTime.setText(formatTimeString(newTime.toString()));
 	}
 	
 	/**
@@ -211,15 +210,15 @@ public class TripHistoryActivity extends AppCompatActivity {
 		// time
 		TextView txtTime = getTxtTime();
 		// get in hh:mm:ss
-		Date tripTime = (Time) trip.getTimeObj(true);
+//		Date tripTime = (Time) trip.getTimeObj(true);
 		
 		// get time obj from view
 		Date oldTime = Time.valueOf(getJDBCTimeFormat(txtTime.getText().toString()));
-		long newMilis = oldTime.getTime() - tripTime.getTime();
+//		long newMilis = oldTime.getTime() - tripTime.getTime();
 		
 		// create the new time to display to view
-		Time newTime = new Time(newMilis);
-		txtTime.setText(formatTimeString(newTime.toString()));
+//		Time newTime = new Time(newMilis);
+//		txtTime.setText(formatTimeString(newTime.toString()));
 	}
 	
 	/**
