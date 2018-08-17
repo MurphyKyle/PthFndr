@@ -13,8 +13,18 @@ import java.util.Date;
 @IgnoreExtraProperties
 public class Trip implements Comparable<Trip>, Parcelable {
 
-    public ArrayList<Path> paths = new ArrayList<>();
+    public static final Parcelable.Creator<Trip> CREATOR
+            = new Parcelable.Creator<Trip>() {
+        public Trip createFromParcel(Parcel in) {
+            return new Trip(in);
+        }
 
+        public Trip[] newArray(int size) {
+            return new Trip[size];
+        }
+    };
+    private final int earthRadius = 6371;
+    public ArrayList<Path> paths = new ArrayList<>();
     private float averageSpeed = 0.0f;
     private float distance = 0.0f;
     private float time = 0.0f;//in seconds
@@ -22,10 +32,9 @@ public class Trip implements Comparable<Trip>, Parcelable {
     private Date date = null;
     private float maxSpeed = 0.0f;
     private long tStart = 0;
-    
+
     public Trip() {
         setTimeObj(System.currentTimeMillis());
-        //setDate((Date) getTimeObj(false));
     }
 
     public Trip(Date startDate) {
@@ -34,7 +43,7 @@ public class Trip implements Comparable<Trip>, Parcelable {
         setDate(startDate);
     }
 
-    public Trip(Parcel in){
+    public Trip(Parcel in) {
         averageSpeed = in.readFloat();
         distance = in.readFloat();
         time = in.readFloat();
@@ -56,7 +65,7 @@ public class Trip implements Comparable<Trip>, Parcelable {
 
     public float getAverageSpeed() {
         float avgSpeed = 0;
-        
+
         // only calculate the average speed if there are paths saved
         if (paths.size() > 0) {
             for (Path p : getPaths()) {
@@ -68,28 +77,33 @@ public class Trip implements Comparable<Trip>, Parcelable {
             return avgSpeed / getPaths().size();
         }
         // no paths to calculate
-        return 0;
+        return avgSpeed;
     }
 
     public void setAverageSpeed(float averageSpeed) {
         this.averageSpeed = averageSpeed;
     }
-    
+
     public float getDistance() {
         float currentDistance = 0;
-    
-        if (paths.size() > 0) {
-            Path currentPath = getPaths().get(0);
-            
-            for (int i = 1; i < getPaths().size() - 1; i++) {
-                //currentDistance += currentPath.getEndLocation().distanceTo(getPaths().get(i).getEndLocation());
-            }
+
+        for (Path p : paths) {
+            double dLat = degreesToRadians(p.getStartLocation().getLatitude() - p.getEndLocation().getLatitude());
+            double dLon = degreesToRadians(p.getStartLocation().getLongitude() - p.getEndLocation().getLongitude());
+            double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(degreesToRadians(p.getStartLocation().getLatitude()))
+                    * Math.cos(degreesToRadians(p.getEndLocation().getLatitude())) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            currentDistance += earthRadius * c;
         }
-        return currentDistance;
+        return currentDistance * 0.62137F;
     }
 
     public void setDistance(float distance) {
         this.distance = distance;
+    }
+
+    public double degreesToRadians(double degree) {
+        return degree * (Math.PI / 180);
     }
 
     public ArrayList<Path> getPaths() {
@@ -127,17 +141,16 @@ public class Trip implements Comparable<Trip>, Parcelable {
     public long getStart() {
         return tStart;
     }
-    
+
     public void setStart(long tStart) {
         this.tStart = tStart;
     }
-    
+
     public void setTimeObj(long sysMillis) {
         this.timeObj = new Time(sysMillis);
     }
-    
+
     /**
-     *
      * @param giveStringValue Specify if you want the string representation
      * @return The time object itself, OR The time object in "hh:mm:ss" format
      * Note: Must cast result to java.sql.Time object or to String
@@ -148,7 +161,7 @@ public class Trip implements Comparable<Trip>, Parcelable {
         }
         return this.timeObj;
     }
-    
+
     @Override
     public int compareTo(Trip other) {
         return Comparators.DATE.compare(this, other);
@@ -170,20 +183,9 @@ public class Trip implements Comparable<Trip>, Parcelable {
         parcel.writeLong(tStart);
         parcel.writeTypedList(paths);
     }
-    
-    public static final Parcelable.Creator<Trip> CREATOR
-            = new Parcelable.Creator<Trip>() {
-        public Trip createFromParcel(Parcel in) {
-            return new Trip(in);
-        }
-        
-        public Trip[] newArray(int size) {
-            return new Trip[size];
-        }
-    };
-    
+
     public static class Comparators {
-        
+
         public static Comparator<Trip> DATE = (o1, o2) -> o1.date.compareTo(o2.date);
 
         public static Comparator<Trip> MAXSPEED = (o1, o2) -> Float.compare(o1.maxSpeed, o2.maxSpeed);

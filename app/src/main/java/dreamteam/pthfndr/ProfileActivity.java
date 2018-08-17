@@ -27,9 +27,6 @@ import dreamteam.pthfndr.models.User;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private FirebaseUser authUser;
-    private DatabaseReference mUserReference;
-    private User user;
     TextView nameTextView;
     TextView joinDateTextView;
     TextView totalTripsTextView;
@@ -38,7 +35,10 @@ public class ProfileActivity extends AppCompatActivity {
     TextView averageDistanceTextView;
     TextView averageSpeedTextView;
     TextView maxSpeedTextView;
-    
+    private FirebaseUser authUser;
+    private DatabaseReference mUserReference;
+    private User user;
+
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -56,7 +56,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         mUserReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -64,7 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
                 user = dataSnapshot.getValue(User.class);
                 nameTextView.setText(user.getName());
                 Date date = new Date(authUser.getMetadata().getCreationTimestamp());
-	            SimpleDateFormat df = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
+                SimpleDateFormat df = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
                 joinDateTextView.setText(df.format(date));
                 int size = user.getTrips().size();
                 totalTripsTextView.setText(String.valueOf(size));
@@ -89,61 +89,61 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
-    
+
     public void viewTripsOnClick(View view) {
         Intent tent = new Intent(this, TripHistoryActivity.class);
         tent.putExtra("user", user);
         startActivity(tent);
     }
 
-    public void finalizeSignOut(){
-    	// this does not work properly?
+    public void finalizeSignOut() {
+        // this does not work properly?
         Intent intent = new Intent(this, SigninActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Removes other Activities from stack
         startActivity(intent);
     }
 
-    private float getTotalTime(User user){
+    private float getTotalTime(User user) {
         float result = 0f;
-        for(int i = 0; i < user.getTrips().size(); i++){
+        for (int i = 0; i < user.getTrips().size(); i++) {
             result += user.getTrips().get(i).getTime();
         }
         return result;
     }
 
-    private float getTotalDistance(User user){
+    private float getTotalDistance(User user) {
         float result = 0f;
-        for(int i = 0; i < user.getTrips().size(); i++){
+        for (int i = 0; i < user.getTrips().size(); i++) {
             result += user.getTrips().get(i).getDistance();
         }
         return result;
     }
 
-    private float getAverageDistance(User user){
+    private float getAverageDistance(User user) {
         float totalDistance = 0f;
-        for(int i = 0; i < user.getTrips().size(); i++){
+        for (int i = 0; i < user.getTrips().size(); i++) {
             // Trip.getDistance() will not do anything for us until it is fully implemented
             totalDistance += user.getTrips().get(i).getDistance();
         }
-        float averageDistance = totalDistance/user.getTrips().size();
+        float averageDistance = totalDistance / user.getTrips().size();
 
         return averageDistance;
     }
 
-    private float getMaxSpeed(User user){
+    private float getMaxSpeed(User user) {
         float result = 0f;
-        for(int i = 0; i < user.getTrips().size(); i++){
-            if(user.getTrips().get(i).getMaxSpeed() > result){
+        for (int i = 0; i < user.getTrips().size(); i++) {
+            if (user.getTrips().get(i).getMaxSpeed() > result) {
                 result = user.getTrips().get(i).getMaxSpeed();
             }
         }
         return result;
     }
 
-    private float getAverageSpeed(User user){
+    private float getAverageSpeed(User user) {
         float speed = 0f;
-        for(int i = 0; i < user.getTrips().size(); i++){
+        for (int i = 0; i < user.getTrips().size(); i++) {
             speed += user.getTrips().get(i).getAverageSpeed();
         }
         float result = speed / user.getTrips().size();
