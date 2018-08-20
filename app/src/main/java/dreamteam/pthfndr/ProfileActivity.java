@@ -19,17 +19,17 @@ import dreamteam.pthfndr.models.FirebaseAccessor;
 import dreamteam.pthfndr.models.User;
 
 public class ProfileActivity extends AppCompatActivity {
-
-    private User user;
-    TextView nameTextView;
-    TextView joinDateTextView;
-    TextView totalTripsTextView;
-    TextView totalTimeTextView;
-    TextView totalDistanceTextView;
-    TextView averageDistanceTextView;
-    TextView averageSpeedTextView;
-    TextView maxSpeedTextView;
     
+    private User user;
+    private TextView nameTextView;
+    private TextView joinDateTextView;
+    private TextView totalTripsTextView;
+    private TextView totalTimeTextView;
+    private TextView totalDistanceTextView;
+    private TextView averageDistanceTextView;
+    private TextView averageSpeedTextView;
+    private TextView maxSpeedTextView;
+
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -45,7 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         user = FirebaseAccessor.getUserModel();
         
@@ -71,15 +71,15 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
-    
+
     public void viewTripsOnClick(View view) {
         Intent tent = new Intent(this, TripHistoryActivity.class);
         tent.putExtra("user", user);
         startActivity(tent);
     }
-
-    public void finalizeSignOut(){
-    	// this does not work properly?
+    
+    public void finalizeSignOut() {
+        // this does not work properly?
         // ends up as a blank screen, needs to be the firebase oAuth screen
         SigninActivity signIn = new SigninActivity();
         signIn.signIn(null); // breaks on this line
@@ -89,50 +89,49 @@ public class ProfileActivity extends AppCompatActivity {
 //        startActivity(intent);
     }
 
-    private float getTotalTime(User user){
+    private float getTotalTime(User user) {
         float result = 0f;
-        for(int i = 0; i < user.getTrips().size(); i++){
+        for (int i = 0; i < user.getTrips().size(); i++) {
             result += user.getTrips().get(i).getTime();
         }
         return result;
     }
 
-    private float getTotalDistance(User user){
+    private float getTotalDistance(User user) {
         float result = 0f;
-        for(int i = 0; i < user.getTrips().size(); i++){
+        for (int i = 0; i < user.getTrips().size(); i++) {
             result += user.getTrips().get(i).getDistance();
         }
         return result;
     }
 
-    private float getAverageDistance(User user){
+    private float getAverageDistance(User user) {
         float totalDistance = 0f;
-        for(int i = 0; i < user.getTrips().size(); i++){
+        for (int i = 0; i < user.getTrips().size(); i++) {
             // Trip.getDistance() will not do anything for us until it is fully implemented
             totalDistance += user.getTrips().get(i).getDistance();
         }
-        float averageDistance = totalDistance/user.getTrips().size();
+        float averageDistance = totalDistance / user.getTrips().size();
 
         return averageDistance;
     }
 
-    private float getMaxSpeed(User user){
+    private float getMaxSpeed(User user) {
         float result = 0f;
-        for(int i = 0; i < user.getTrips().size(); i++){
-            if(user.getTrips().get(i).getMaxSpeed() > result){
+        for (int i = 0; i < user.getTrips().size(); i++) {
+            if (user.getTrips().get(i).getMaxSpeed() > result) {
                 result = user.getTrips().get(i).getMaxSpeed();
             }
         }
         return result;
     }
 
-    private float getAverageSpeed(User user){
+    private float getAverageSpeed(User user) {
         float speed = 0f;
-        for(int i = 0; i < user.getTrips().size(); i++){
+        for (int i = 0; i < user.getTrips().size(); i++) {
             speed += user.getTrips().get(i).getAverageSpeed();
         }
         float result = speed / user.getTrips().size();
         return result;
     }
-
 }

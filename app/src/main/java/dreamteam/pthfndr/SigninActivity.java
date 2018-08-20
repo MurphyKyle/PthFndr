@@ -21,12 +21,15 @@ import dreamteam.pthfndr.models.User;
 
 public class SigninActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
-    List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.GoogleBuilder().build(), new AuthUI.IdpConfig.EmailBuilder().build());
+    private static SigninActivity thisRef;
+    List<AuthUI.IdpConfig> providers
+            = Arrays.asList(new AuthUI.IdpConfig.GoogleBuilder().build(), new AuthUI.IdpConfig.EmailBuilder().build());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         FirebaseAccessor.setFireBaseResources();
         super.onCreate(savedInstanceState);
+        thisRef = this;
         signIn(null);
     }
 
@@ -49,16 +52,17 @@ public class SigninActivity extends AppCompatActivity {
                     
                     // create a new user in the pthfndr database
                     if (FirebaseAccessor.createUserModel(newUser)) {
-                        //Toast.makeText(getApplicationContext(), "New User Saved!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(thisRef, "New User Saved!", Toast.LENGTH_LONG).show();
                     }
                 }
-
+                
                 Intent i = new Intent(this, MapsActivity.class);
                 i.putExtra("user", newUser);
                 startActivity(i);
             } else {
                 try {
                     Toast.makeText(this, response.getError().getErrorCode(), Toast.LENGTH_LONG).show();
+                    finish();
                 } catch (NullPointerException e) {
                     Toast.makeText(this, "Unknown Error Occurred", Toast.LENGTH_LONG).show();
                 }
@@ -81,7 +85,10 @@ public class SigninActivity extends AppCompatActivity {
         trip.setDistance(generateRandomFloat(1000));
         trip.setMaxSpeed(generateRandomFloat(200));
         trip.setTime(generateRandomFloat(100));
-        trip.paths.add(new Path(new MLocation(0, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112)), new MLocation(0, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112)), null, (int) generateRandomDouble(100), new Random().nextInt(100)));
+        trip.paths.add(new Path(
+                new MLocation(1, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112)),
+                new MLocation(1, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112)),
+                    null, (int) generateRandomDouble(100), new Random().nextInt(100)));
         return trip;
     }
 

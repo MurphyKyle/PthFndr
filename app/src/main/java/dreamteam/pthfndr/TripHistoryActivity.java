@@ -297,49 +297,49 @@ public class TripHistoryActivity extends AppCompatActivity {
 			tog.setText(text);
 			tog.setTag(t);
 //			tog.callOnClick(setAddTripData(tog)); // if listener doesn't work out
-			tog.setOnClickListener(this::setAddTripData);
-			getTripListView().addFooterView(tog, t, true);
-		}
-	}
+            tog.setOnClickListener(this::setAddTripData);
+            getTripListView().addFooterView(tog, t, true);
+        }
+    }
 	
 	
 	/*
 	Getters and Setters
 	*/
-	
-	public User getTheUser() {
-		return theUser;
-	}
-	
-	public void setTheUser(User theUser) {
-		this.theUser = theUser;
-	}
-	
-	public TextView getTxtDate() {
-		return txtDate;
-	}
-	
-	public TextView getTxtTime() {
-		return txtTime;
-	}
-	
-	public TextView getTxtDistance() {
-		return txtDistance;
-	}
-	
-	public TextView getTxtMaxSpeed() {
-		return txtMaxSpeed;
-	}
-	
-	public TextView getTxtAverageSpeed() {
-		return txtAverageSpeed;
-	}
-	
-	public ListView getTripListView() {
-		return tripListView;
-	}
-	
-	public ArrayList<Trip> getActiveTrips() {
-		return activeTrips;
-	}
+
+    public User getTheUser() {
+        return theUser;
+    }
+
+    public void setTheUser(User theUser) {
+        this.theUser = theUser;
+    }
+
+    public TextView getTxtDate() {
+        return txtDate;
+    }
+
+    public TextView getTxtTime() {
+        return txtTime;
+    }
+
+    public TextView getTxtDistance() {
+        return txtDistance;
+    }
+
+    public TextView getTxtMaxSpeed() {
+        return txtMaxSpeed;
+    }
+
+    public TextView getTxtAverageSpeed() {
+        return txtAverageSpeed;
+    }
+
+    public ListView getTripListView() {
+        return tripListView;
+    }
+
+    public ArrayList<Trip> getActiveTrips() {
+        return activeTrips;
+    }
 }

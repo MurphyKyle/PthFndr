@@ -12,18 +12,15 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -36,48 +33,101 @@ import dreamteam.pthfndr.models.Trip;
 import dreamteam.pthfndr.models.User;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+    private static MapsActivity thisRef;
     boolean isActive = false;
     private User currentUser;
-    private static MapsActivity thisRef;
     double latitude = 0;
     double longitude = 0;
+    Location cLoc;
     Trip trip = new Trip(Calendar.getInstance().getTime());
     long time = 0;
     private GoogleMap mMap;
+    private boolean mLocationPermissionGranted;
+    
     private final LocationListener locationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
             if (isActive) {
+                
                 double longitudeNew = location.getLongitude();
                 double latitudeNew = location.getLatitude();
-                Polyline l = mMap.addPolyline(new PolylineOptions()
-                        .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
-                        .width(5)
-                        .color(Color.DKGRAY)
-                );
-                trip.paths.add(new Path(new MLocation(location.getSpeed(), latitude, longitude), new MLocation(location.getSpeed(), latitudeNew, longitudeNew), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
+                
+                float currentSpeed = location.getSpeed() * 2.236936F;
+                int width = checkPaths(5, longitudeNew, latitudeNew);
+                Polyline l = null;
+                if (currentSpeed <= 10) {
+                    l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(width)
+                            .color(Color.argb(255, 0, 255, 0))
+                    );
+                } else if (currentSpeed > 11 && currentSpeed <= 30) {
+                    l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(width)
+                            .color(Color.argb(255, 128, 255, 0))
+                    );
+                } else if (currentSpeed > 31 && currentSpeed <= 61) {
+                    l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(width)
+                            .color(Color.argb(255, 255, 255, 0))
+                    );
+                } else if (currentSpeed > 61 && currentSpeed <= 90) {
+                    l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(width)
+                            .color(Color.argb(255, 255, 163, 0))
+                    );
+                } else if (currentSpeed > 91) {
+                    l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(width)
+                            .color(Color.argb(255, 255, 0, 0))
+                    );
+                }
+                trip.paths.add(new Path(new MLocation(cLoc.getSpeed(), latitude, longitude), new MLocation(location.getSpeed(), latitudeNew, longitudeNew), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
+                cLoc = location;
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
             }
         }
-
+        
+        private int checkPaths(int i, double longitudeNew, double latitudeNew) {
+            for (Trip t : currentUser.getTrips()) {
+                for (Path p : t.getPaths()) {
+                    
+                    if (p.getEndLocation().getLatitude() >= (latitudeNew - .0004) && p.getEndLocation().getLatitude() >= (latitudeNew + .0004) ||
+                            p.getStartLocation().getLatitude() >= (latitudeNew - .0004) && p.getStartLocation().getLatitude() >= (latitudeNew + .0004)) {
+                        if (p.getEndLocation().getLongitude() >= (longitudeNew - .0004) && p.getEndLocation().getLongitude() >= (longitudeNew + .0004) ||
+                                p.getStartLocation().getLongitude() >= (longitudeNew - .0004) && p.getStartLocation().getLongitude() >= (longitudeNew + .0004))
+                        {
+                            i += 2;
+                            i = i > 15 ? 15 : i;
+                        }
+                    }
+                }
+            }
+            return i;
+        }
+        
+        
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {
         }
-
+        
         @Override
         public void onProviderEnabled(String s) {
         }
-
+        
         @Override
         public void onProviderDisabled(String s) {
         }
     };
-    private boolean mLocationPermissionGranted;
-
-    private Location mLastLocation;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        String[] keys = getIntent().getExtras().keySet().toArray(new String[1]);
+        currentUser = getIntent().getExtras().getParcelable(keys[0]);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -89,12 +139,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        
         if (currentUser != null) {
             for (Trip t : currentUser.getTrips()) {
                 for (Path p : t.getPaths()) {
                     Polyline l = mMap.addPolyline(new PolylineOptions()
-                            .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
+                            .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()),
+                                    new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
                             .width(5)
                             .color(Color.DKGRAY)
                     );
@@ -107,7 +157,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 currentUser = getIntent().getExtras().getParcelable("user");
             }
         }
-    
+
         getLocationPermission();
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -119,8 +169,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        longitude = location.getLongitude();
+        cLoc = location;
         latitude = location.getLatitude();
+        longitude = location.getLongitude();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
 
         time = System.currentTimeMillis();
@@ -161,18 +212,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startActivity(i);
     }
 
-    public void onLocationChanged(Location location) {
-        mLastLocation = location;
-        Log.d("aaaaaaaa===>", "" + location.getLatitude() + "\n" + location.getLongitude());
-        mMap.clear();
-        final LatLng loc = new LatLng(location.getLongitude(), location.getLongitude());
-
-        Marker ham = mMap.addMarker(new MarkerOptions().position(loc).title("This is Me"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
-    }
-
     public void manageTrip(View view) {
-        isActive = isActive ? false : true;
+        isActive = !isActive;
 
         Button b = findViewById(R.id.TripButton);
         if (isActive) {
@@ -181,6 +222,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             b.setText(R.string.endTrip);
         } else {
+            mMap.clear();
+            for (Trip t : currentUser.getTrips()) {
+                for (Path p : t.getPaths()) {
+                    Polyline l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
+                            .width(5)
+                            .color(p.getPl().getColor())
+                    );
+                }
+            }
             trip.endTrip();
             currentUser.addTrip(trip);
             trip = new Trip();

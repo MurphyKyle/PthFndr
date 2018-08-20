@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class User implements Parcelable{
+public class User implements Parcelable {
 
     @Exclude
     public static final String DEFAULT_NAME = "no name";
@@ -19,21 +19,21 @@ public class User implements Parcelable{
     private String UID = "no uid";
     private String Name = DEFAULT_NAME;
     private ArrayList<Trip> Trips = new ArrayList<>();
-    
+
     public User() { }
-    
-    public User(String name, String ID){
+
+    public User(String name, String ID) {
         setName(name);
         setUID(ID);
     }
-    
+
     private User(Parcel in) {
         UID = in.readString();
         Name = in.readString();
         in.readTypedList(Trips, Trip.CREATOR);
     }
 
-    public void addTrip(Trip t){
+    public void addTrip(Trip t) {
         getTrips().add(t);
     }
 
@@ -52,6 +52,7 @@ public class User implements Parcelable{
     public void setTrips(ArrayList<Trip> trips) {
         Trips = trips;
     }
+
     @Exclude
     public String getUID() {
         return UID;
@@ -60,8 +61,9 @@ public class User implements Parcelable{
     public void setUID(String UID) {
         this.UID = UID;
     }
+
     @Exclude
-    public Map<String, Object> toMap(){
+    public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("Name", Name);
         result.put("Trips", Trips);
@@ -90,5 +92,4 @@ public class User implements Parcelable{
             return new User[size];
         }
     };
-    
 }

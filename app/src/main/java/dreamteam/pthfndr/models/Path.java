@@ -16,7 +16,8 @@ public class Path implements Parcelable {
     private MLocation endLocation;
     private MLocation startLocation;
 
-    public Path() { }
+    public Path() {
+    }
 
     public Path(MLocation sl, MLocation el, Polyline p, int c, int timePassed) {
         setStartLocation(sl);
@@ -26,7 +27,7 @@ public class Path implements Parcelable {
         setSeconds(timePassed);
     }
 
-    protected Path(Parcel in) {
+    private Path(Parcel in) {
         pl = (Polyline) in.readValue(getClass().getClassLoader());
         color = in.readInt();
         seconds = in.readInt();
@@ -43,7 +44,7 @@ public class Path implements Parcelable {
     }
 
     public float getSpeed() {
-        return getEndLocation().getSpeed() * 3.6F;
+        return getEndLocation().getSpeed() * 2.236936F;
     }
 
     public MLocation getEndLocation() {
@@ -104,5 +105,4 @@ public class Path implements Parcelable {
             return new Path[size];
         }
     };
-    
 }
