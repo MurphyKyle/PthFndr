@@ -28,6 +28,7 @@ import java.util.Calendar;
 
 import dreamteam.pthfndr.models.FirebaseAccessor;
 import dreamteam.pthfndr.models.MLocation;
+import dreamteam.pthfndr.models.MPolyLine;
 import dreamteam.pthfndr.models.Path;
 import dreamteam.pthfndr.models.Trip;
 import dreamteam.pthfndr.models.User;
@@ -54,38 +55,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 float currentSpeed = location.getSpeed() * 2.236936F;
                 int width = checkPaths(5, longitudeNew, latitudeNew);
                 Polyline l = null;
+                MPolyLine mp = null;
                 if (currentSpeed <= 10) {
-                    l = mMap.addPolyline(new PolylineOptions()
-                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
-                            .width(width)
-                            .color(Color.argb(255, 0, 255, 0))
-                    );
+                    mp = new MPolyLine(longitude, latitude,longitudeNew, latitudeNew, Color.argb(255, 0, 255, 0), width);
                 } else if (currentSpeed > 11 && currentSpeed <= 30) {
-                    l = mMap.addPolyline(new PolylineOptions()
-                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
-                            .width(width)
-                            .color(Color.argb(255, 128, 255, 0))
-                    );
+                    mp = new MPolyLine(longitude, latitude,longitudeNew, latitudeNew, Color.argb(255, 128, 255, 0), width);
                 } else if (currentSpeed > 31 && currentSpeed <= 61) {
-                    l = mMap.addPolyline(new PolylineOptions()
-                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
-                            .width(width)
-                            .color(Color.argb(255, 255, 255, 0))
-                    );
+                    mp = new MPolyLine(longitude, latitude,longitudeNew, latitudeNew, Color.argb(255, 255, 255, 0), width);
                 } else if (currentSpeed > 61 && currentSpeed <= 90) {
-                    l = mMap.addPolyline(new PolylineOptions()
-                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
-                            .width(width)
-                            .color(Color.argb(255, 255, 163, 0))
-                    );
+                    mp = new MPolyLine(longitude, latitude,longitudeNew, latitudeNew, Color.argb(255, 255, 163, 0), width);
                 } else if (currentSpeed > 91) {
-                    l = mMap.addPolyline(new PolylineOptions()
-                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
-                            .width(width)
-                            .color(Color.argb(255, 255, 0, 0))
-                    );
+                    mp = new MPolyLine(longitude, latitude,longitudeNew, latitudeNew, Color.argb(255, 255, 0, 0), width);
                 }
-                trip.paths.add(new Path(new MLocation(cLoc.getSpeed(), latitude, longitude), new MLocation(location.getSpeed(), latitudeNew, longitudeNew), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
+                l = mMap.addPolyline(new PolylineOptions()
+                        .add(new LatLng(mp.getStartingLatitude(), mp.getStartingLongitude()), new LatLng(mp.getEndingLatitude(), mp.getEndingLongitude()))
+                        .width(mp.getWidth())
+                        .color(mp.getColor())
+                );
+                trip.paths.add(new Path(new MLocation(cLoc.getSpeed(), latitude, longitude), new MLocation(location.getSpeed(), latitudeNew, longitudeNew), mp, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
                 cLoc = location;
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
@@ -101,8 +88,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if (p.getEndLocation().getLongitude() >= (longitudeNew - .0004) && p.getEndLocation().getLongitude() >= (longitudeNew + .0004) ||
                                 p.getStartLocation().getLongitude() >= (longitudeNew - .0004) && p.getStartLocation().getLongitude() >= (longitudeNew + .0004))
                         {
-                            i += 2;
-                            i = i > 15 ? 15 : i;
+                            i += 5;
+                            i = i > 50 ? 50 : i;
                         }
                     }
                 }
@@ -253,6 +240,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateUser() {
         if (FirebaseAccessor.updateUserModel(currentUser)) {
             Toast.makeText(thisRef, "Trip Saved !", Toast.LENGTH_LONG).show();
+        }
+        mMap.clear();
+        for (Trip t : currentUser.getTrips()) {
+            for (Path p : t.getPaths()) {
+                Polyline l = mMap.addPolyline(new PolylineOptions()
+                        .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
+                        .color(p.getColor())
+                );
+                if(p.getPl() != null){
+                    l.setWidth(p.getPl().getWidth());
+                }else{
+                    l.setWidth(5);
+                }
+            }
         }
     }
 }

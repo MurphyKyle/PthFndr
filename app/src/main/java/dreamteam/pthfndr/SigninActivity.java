@@ -19,6 +19,7 @@ import java.util.Random;
 
 import dreamteam.pthfndr.models.FirebaseAccessor;
 import dreamteam.pthfndr.models.MLocation;
+import dreamteam.pthfndr.models.MPolyLine;
 import dreamteam.pthfndr.models.Path;
 import dreamteam.pthfndr.models.Trip;
 import dreamteam.pthfndr.models.User;
@@ -90,7 +91,7 @@ public class SigninActivity extends AppCompatActivity {
         trip.setTime(generateRandomFloat(100));
         MLocation m1 = new MLocation(1, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112));
         MLocation m2 = new MLocation(1, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112));
-        Polyline pl = new Polyline(null);
+        MPolyLine pl = new MPolyLine(0,0,0,0,Color.argb(255, 255, 255, 255), 5);
         trip.paths.add(new Path(m1, m2, pl,0,0));
         return trip;
     }
