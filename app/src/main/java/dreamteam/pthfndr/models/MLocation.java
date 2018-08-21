@@ -4,16 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class MLocation implements Parcelable {
-    public static final Parcelable.Creator<MLocation> CREATOR
-            = new Parcelable.Creator<MLocation>() {
-        public MLocation createFromParcel(Parcel in) {
-            return new MLocation(in);
-        }
-
-        public MLocation[] newArray(int size) {
-            return new MLocation[size];
-        }
-    };
+   
     private double latitude = 1;
     private double longitude = 1;
     private float speed = 1;
@@ -27,7 +18,7 @@ public class MLocation implements Parcelable {
         speed = s;
     }
 
-    public MLocation(Parcel in) {
+    private MLocation(Parcel in) {
         latitude = in.readDouble();
         longitude = in.readDouble();
         speed = in.readFloat();
@@ -68,5 +59,15 @@ public class MLocation implements Parcelable {
         parcel.writeDouble(longitude);
         parcel.writeFloat(speed);
     }
-
+    
+    public static final Parcelable.Creator<MLocation> CREATOR
+            = new Parcelable.Creator<MLocation>() {
+        public MLocation createFromParcel(Parcel in) {
+            return new MLocation(in);
+        }
+        
+        public MLocation[] newArray(int size) {
+            return new MLocation[size];
+        }
+    };
 }
