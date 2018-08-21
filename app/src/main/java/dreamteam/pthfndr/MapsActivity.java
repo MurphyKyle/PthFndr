@@ -155,8 +155,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (Path p : t.getPaths()) {
                     Polyline l = mMap.addPolyline(new PolylineOptions()
                             .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
-                            .width(5)
-                            .color(Color.DKGRAY)
+                            .width(p.getPl().getWidth())
+                            .color(p.getColor())
                     );
                 }
             }
@@ -229,7 +229,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (Path p : t.getPaths()) {
                     Polyline l = mMap.addPolyline(new PolylineOptions()
                             .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
-                            .width(5)
+                            .width(p.getPl().getWidth())
                             .color(p.getPl().getColor())
                     );
                 }
