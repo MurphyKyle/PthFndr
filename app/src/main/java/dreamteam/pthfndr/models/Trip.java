@@ -5,51 +5,36 @@ import android.os.Parcelable;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 
 @IgnoreExtraProperties
 public class Trip implements Comparable<Trip>, Parcelable {
-
-    public static final Parcelable.Creator<Trip> CREATOR
-            = new Parcelable.Creator<Trip>() {
-        public Trip createFromParcel(Parcel in) {
-            return new Trip(in);
-        }
-
-        public Trip[] newArray(int size) {
-            return new Trip[size];
-        }
-    };
+    
     private final int earthRadius = 6371;
     public ArrayList<Path> paths = new ArrayList<>();
     private float averageSpeed = 0.0f;
     private float distance = 0.0f;
     private float time = 0.0f;//in seconds
-    private Date timeObj = null;
-    private Date date = null;
+    private long dateMilis = 0;
     private float maxSpeed = 0.0f;
     private long tStart = 0;
 
     public Trip() {
-        setTimeObj(System.currentTimeMillis());
-//        setDate((Date) getTimeObj(false));
+        setDateMilis(System.currentTimeMillis());
     }
 
     public Trip(Date startDate) {
         setStart(System.currentTimeMillis());
-        setTimeObj(getStart());
-        setDate(startDate);
+        setDateMilis(startDate.getTime());
     }
 
-    public Trip(Parcel in) {
+    private Trip(Parcel in) {
         averageSpeed = in.readFloat();
         distance = in.readFloat();
         time = in.readFloat();
-        timeObj = new Time(in.readLong());
-        date = new Date(in.readLong());
+        dateMilis = in.readLong();
         maxSpeed = in.readFloat();
         tStart = in.readLong();
         in.readTypedList(paths, Path.CREATOR);
@@ -58,7 +43,6 @@ public class Trip implements Comparable<Trip>, Parcelable {
     public void endTrip() {
         long tEnd = System.currentTimeMillis();
         long tDelta = tEnd - getStart();
-        setTimeObj(tDelta);
         setTime((float) (tDelta / 1000.0));
         setAverageSpeed(getAverageSpeed());
         setDistance(getDistance());
@@ -124,11 +108,11 @@ public class Trip implements Comparable<Trip>, Parcelable {
     }
 
     public Date getDate() {
-        return date;
+        return new Date(dateMilis);
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDateMilis(long milis) {
+        this.dateMilis = milis;
     }
 
     public float getMaxSpeed() {
@@ -146,23 +130,7 @@ public class Trip implements Comparable<Trip>, Parcelable {
     public void setStart(long tStart) {
         this.tStart = tStart;
     }
-
-    public void setTimeObj(long sysMillis) {
-        this.timeObj = new Time(sysMillis);
-    }
-
-    /**
-     * @param giveStringValue Specify if you want the string representation
-     * @return The time object itself, OR The time object in "hh:mm:ss" format
-     * Note: Must cast result to java.sql.Time object or to String
-     */
-    public Object getTimeObj(boolean giveStringValue) {
-        if (giveStringValue) {
-            return this.timeObj.toString();
-        }
-        return this.timeObj;
-    }
-
+    
     @Override
     public int compareTo(Trip other) {
         return Comparators.DATE.compare(this, other);
@@ -178,17 +146,26 @@ public class Trip implements Comparable<Trip>, Parcelable {
         parcel.writeFloat(averageSpeed);
         parcel.writeFloat(distance);
         parcel.writeFloat(time);
-        parcel.writeLong(timeObj.getTime());
-        parcel.writeLong(date.getTime());
+        parcel.writeLong(dateMilis);
         parcel.writeFloat(maxSpeed);
         parcel.writeLong(tStart);
         parcel.writeTypedList(paths);
     }
 
     public static class Comparators {
-
-        public static Comparator<Trip> DATE = (o1, o2) -> o1.date.compareTo(o2.date);
-
+        public static Comparator<Trip> DATE = (o1, o2) -> Long.compare(o1.dateMilis, o2.dateMilis);
+        
         public static Comparator<Trip> MAXSPEED = (o1, o2) -> Float.compare(o1.maxSpeed, o2.maxSpeed);
     }
+    
+    public static final Parcelable.Creator<Trip> CREATOR
+            = new Parcelable.Creator<Trip>() {
+        public Trip createFromParcel(Parcel in) {
+            return new Trip(in);
+        }
+        
+        public Trip[] newArray(int size) {
+            return new Trip[size];
+        }
+    };
 }

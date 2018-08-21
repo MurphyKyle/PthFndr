@@ -13,19 +13,11 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class User implements Parcelable {
 
-    public static final Parcelable.Creator<User> CREATOR
-            = new Parcelable.Creator<User>() {
-        public User createFromParcel(Parcel in) {
-            return new User(in);
-        }
-
-        public User[] newArray(int size) {
-            return new User[size];
-        }
-    };
-    private String Name = "no name";
+    @Exclude
+    public static final String DEFAULT_NAME = "no name";
     @Exclude
     private String UID = "no uid";
+    private String Name = DEFAULT_NAME;
     private ArrayList<Trip> Trips = new ArrayList<>();
     private double gallonsOfGas;
     private double priceOfFillUp;
@@ -33,8 +25,7 @@ public class User implements Parcelable {
     private double averageMilesPerGallon;
     private double averageCostPerMile;
 
-    public User() {
-    }
+    public User() { }
 
     public User(String name, String ID) {
         setName(name);
@@ -135,5 +126,15 @@ public class User implements Parcelable {
         parcel.writeString(Name);
         parcel.writeTypedList(Trips);
     }
-
+    
+    public static final Parcelable.Creator<User> CREATOR
+            = new Parcelable.Creator<User>() {
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+        
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 }

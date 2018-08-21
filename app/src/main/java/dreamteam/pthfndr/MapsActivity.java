@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -22,91 +23,141 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
+import dreamteam.pthfndr.models.FirebaseAccessor;
 import dreamteam.pthfndr.models.MLocation;
 import dreamteam.pthfndr.models.Path;
 import dreamteam.pthfndr.models.Trip;
+import dreamteam.pthfndr.models.User;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private static MapsActivity thisRef;
     boolean isActive = false;
-    dreamteam.pthfndr.models.User currentUser;
+    private User currentUser;
     double latitude = 0;
     double longitude = 0;
     Location cLoc;
     Trip trip = new Trip(Calendar.getInstance().getTime());
     long time = 0;
     private GoogleMap mMap;
+    private boolean mLocationPermissionGranted;
+    
     private final LocationListener locationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
             if (isActive) {
+                
                 double longitudeNew = location.getLongitude();
                 double latitudeNew = location.getLatitude();
-                Polyline l = mMap.addPolyline(new PolylineOptions()
-                        .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
-                        .width(5)
-                        .color(Color.BLUE)
-                );
+                
+                float currentSpeed = location.getSpeed() * 2.236936F;
+                int width = checkPaths(5, longitudeNew, latitudeNew);
+                Polyline l = null;
+                if (currentSpeed <= 10) {
+                    l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(width)
+                            .color(Color.argb(255, 0, 255, 0))
+                    );
+                } else if (currentSpeed > 11 && currentSpeed <= 30) {
+                    l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(width)
+                            .color(Color.argb(255, 128, 255, 0))
+                    );
+                } else if (currentSpeed > 31 && currentSpeed <= 61) {
+                    l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(width)
+                            .color(Color.argb(255, 255, 255, 0))
+                    );
+                } else if (currentSpeed > 61 && currentSpeed <= 90) {
+                    l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(width)
+                            .color(Color.argb(255, 255, 163, 0))
+                    );
+                } else if (currentSpeed > 91) {
+                    l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(latitude, longitude), new LatLng(latitudeNew, longitudeNew))
+                            .width(width)
+                            .color(Color.argb(255, 255, 0, 0))
+                    );
+                }
                 trip.paths.add(new Path(new MLocation(cLoc.getSpeed(), latitude, longitude), new MLocation(location.getSpeed(), latitudeNew, longitudeNew), l, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
                 cLoc = location;
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
             }
         }
-
+        
+        private int checkPaths(int i, double longitudeNew, double latitudeNew) {
+            for (Trip t : currentUser.getTrips()) {
+                for (Path p : t.getPaths()) {
+                    
+                    if (p.getEndLocation().getLatitude() >= (latitudeNew - .0004) && p.getEndLocation().getLatitude() >= (latitudeNew + .0004) ||
+                            p.getStartLocation().getLatitude() >= (latitudeNew - .0004) && p.getStartLocation().getLatitude() >= (latitudeNew + .0004)) {
+                        if (p.getEndLocation().getLongitude() >= (longitudeNew - .0004) && p.getEndLocation().getLongitude() >= (longitudeNew + .0004) ||
+                                p.getStartLocation().getLongitude() >= (longitudeNew - .0004) && p.getStartLocation().getLongitude() >= (longitudeNew + .0004))
+                        {
+                            i += 2;
+                            i = i > 15 ? 15 : i;
+                        }
+                    }
+                }
+            }
+            return i;
+        }
+        
+        
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {
         }
-
+        
         @Override
         public void onProviderEnabled(String s) {
         }
-
+        
         @Override
         public void onProviderDisabled(String s) {
         }
     };
-    private boolean mLocationPermissionGranted;
-    private FirebaseUser authUser;
-    private DatabaseReference fDB;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         String[] keys = getIntent().getExtras().keySet().toArray(new String[1]);
         currentUser = getIntent().getExtras().getParcelable(keys[0]);
         super.onCreate(savedInstanceState);
-        authUser = FirebaseAuth.getInstance().getCurrentUser();
-        fDB = FirebaseDatabase.getInstance().getReference().child("users");
         setContentView(R.layout.activity_maps);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         thisRef = this;
+        currentUser = FirebaseAccessor.getUserModel();
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         if (currentUser != null) {
             for (Trip t : currentUser.getTrips()) {
                 for (Path p : t.getPaths()) {
                     Polyline l = mMap.addPolyline(new PolylineOptions()
                             .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
-                            .width(5)
-                            .color(Color.DKGRAY)
+                            .color(p.getColor())
                     );
+                    if(p.getPl() != null){
+                        l.setWidth(p.getPl().getWidth());
+                    }else{
+                        l.setWidth(5);
+                    }
                 }
+            }
+        } else {
+            // if the map is ready but we still don't have the user model
+            // manually get it
+            if (getIntent().getExtras() != null) {
+                currentUser = getIntent().getExtras().getParcelable("user");
             }
         }
 
@@ -159,6 +210,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void signOut(View view) {
         Intent i = new Intent(this, ProfileActivity.class);
+        User user = getIntent().getExtras().getParcelable("user");
+        i.putExtra("user", user);
         startActivity(i);
     }
 
@@ -177,9 +230,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (Path p : t.getPaths()) {
                     Polyline l = mMap.addPolyline(new PolylineOptions()
                             .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
-                            .width(5)
-                            .color(Color.DKGRAY)
+
+
                     );
+                    if(p.getPl() != null) {
+                        l.setWidth(p.getPl().getWidth());
+                        l.setColor(p.getPl().getColor());
+                    }else{
+                        l.setWidth(5);
+                        l.setColor(Color.BLACK);
+                    }
                 }
             }
             trip.endTrip();
@@ -191,19 +251,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateUser() {
-        fDB.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Map<String, Object> userValues = currentUser.toMap();
-                Map<String, Object> userUpdates = new HashMap<>();
-                userUpdates.put(authUser.getUid(), userValues);
-                fDB.updateChildren(userUpdates, (databaseError, databaseReference) ->
-                        Toast.makeText(thisRef, "Trip Saved!", Toast.LENGTH_LONG).show());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+        if (FirebaseAccessor.updateUserModel(currentUser)) {
+            Toast.makeText(thisRef, "Trip Saved !", Toast.LENGTH_LONG).show();
+        }
     }
 }
