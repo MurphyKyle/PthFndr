@@ -10,7 +10,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class Path implements Parcelable {
     
-    private Polyline pl;
+    private MPolyLine pl;
     private int color;
     private int seconds;
     private MLocation endLocation;
@@ -19,7 +19,7 @@ public class Path implements Parcelable {
     public Path() {
     }
 
-    public Path(MLocation sl, MLocation el, Polyline p, int c, int timePassed) {
+    public Path(MLocation sl, MLocation el, MPolyLine p, int c, int timePassed) {
         setStartLocation(sl);
         setEndLocation(el);
         setPl(p);
@@ -28,7 +28,7 @@ public class Path implements Parcelable {
     }
 
     private Path(Parcel in) {
-        pl = (Polyline) in.readValue(getClass().getClassLoader());
+        pl = (MPolyLine) in.readValue(getClass().getClassLoader());
         color = in.readInt();
         seconds = in.readInt();
         endLocation = (MLocation) in.readValue(getClass().getClassLoader());
@@ -56,11 +56,11 @@ public class Path implements Parcelable {
     }
 
     @Exclude
-    public Polyline getPl() {
+    public MPolyLine getPl() {
         return pl;
     }
 
-    public void setPl(Polyline pl) {
+    public void setPl(MPolyLine pl) {
         this.pl = pl;
     }
 

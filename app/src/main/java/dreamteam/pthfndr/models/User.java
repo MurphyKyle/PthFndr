@@ -19,6 +19,11 @@ public class User implements Parcelable {
     private String UID = "no uid";
     private String Name = DEFAULT_NAME;
     private ArrayList<Trip> Trips = new ArrayList<>();
+    private double gallonsOfGas;
+    private double priceOfFillUp;
+    private String dateOfFillUp;
+    private double averageMilesPerGallon;
+    private double averageCostPerMile;
 
     public User() { }
 
@@ -31,6 +36,46 @@ public class User implements Parcelable {
         UID = in.readString();
         Name = in.readString();
         in.readTypedList(Trips, Trip.CREATOR);
+    }
+
+    public double getGallonsOfGas() {
+        return gallonsOfGas;
+    }
+
+    public void setGallonsOfGas(double gallonsOfGas) {
+        this.gallonsOfGas = gallonsOfGas;
+    }
+
+    public double getPriceOfFillUp() {
+        return priceOfFillUp;
+    }
+
+    public void setPriceOfFillUp(double priceOfFillUp) {
+        this.priceOfFillUp = priceOfFillUp;
+    }
+
+    public String getDateOfFillUp() {
+        return dateOfFillUp;
+    }
+
+    public void setDateOfFillUp(String date) {
+        this.dateOfFillUp = date;
+    }
+
+    public double getAverageMilesPerGallon() {
+        return averageMilesPerGallon;
+    }
+
+    public void setAverageMilesPerGallon(double averageMilesPerGallon) {
+        this.averageMilesPerGallon = averageMilesPerGallon;
+    }
+
+    public double getAverageCostPerMile() {
+        return averageCostPerMile;
+    }
+
+    public void setAverageCostPerMile(double averageCostPerMile) {
+        this.averageCostPerMile = averageCostPerMile;
     }
 
     public void addTrip(Trip t) {
