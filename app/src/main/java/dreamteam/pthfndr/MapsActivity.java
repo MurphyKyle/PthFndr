@@ -9,13 +9,15 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-
+import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,36 +38,34 @@ import dreamteam.pthfndr.models.User;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private static MapsActivity thisRef;
     boolean isActive = false;
-    private User currentUser;
     double latitude = 0;
     double longitude = 0;
     Location cLoc;
     Trip trip = new Trip(Calendar.getInstance().getTime());
     long time = 0;
+    private User currentUser;
     private GoogleMap mMap;
-    private boolean mLocationPermissionGranted;
-    
     private final LocationListener locationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
             if (isActive) {
-                
+
                 double longitudeNew = location.getLongitude();
                 double latitudeNew = location.getLatitude();
-                
+
                 float currentSpeed = location.getSpeed() * 2.236936F;
                 int width = checkPaths(5, longitudeNew, latitudeNew);
                 Polyline l = null;
                 MPolyLine mp = null;
                 if (currentSpeed <= 10) {
-                    mp = new MPolyLine(longitude, latitude,longitudeNew, latitudeNew, Color.argb(255, 0, 255, 0), width);
-                } else if (currentSpeed > 11 && currentSpeed <= 30) {
-                    mp = new MPolyLine(longitude, latitude,longitudeNew, latitudeNew, Color.argb(255, 128, 255, 0), width);
-                } else if (currentSpeed > 31 && currentSpeed <= 61) {
-                    mp = new MPolyLine(longitude, latitude,longitudeNew, latitudeNew, Color.argb(255, 255, 255, 0), width);
-                } else if (currentSpeed > 61 && currentSpeed <= 90) {
-                    mp = new MPolyLine(longitude, latitude,longitudeNew, latitudeNew, Color.argb(255, 255, 163, 0), width);
-                } else if (currentSpeed > 91) {
-                    mp = new MPolyLine(longitude, latitude,longitudeNew, latitudeNew, Color.argb(255, 255, 0, 0), width);
+                    mp = new MPolyLine(longitude, latitude, longitudeNew, latitudeNew, Color.argb(255, 0, 255, 0), width);
+                } else if (currentSpeed > 10 && currentSpeed <= 30) {
+                    mp = new MPolyLine(longitude, latitude, longitudeNew, latitudeNew, Color.argb(255, 128, 255, 0), width);
+                } else if (currentSpeed > 30 && currentSpeed <= 60) {
+                    mp = new MPolyLine(longitude, latitude, longitudeNew, latitudeNew, Color.argb(255, 255, 255, 0), width);
+                } else if (currentSpeed > 60 && currentSpeed <= 90) {
+                    mp = new MPolyLine(longitude, latitude, longitudeNew, latitudeNew, Color.argb(255, 255, 163, 0), width);
+                } else if (currentSpeed > 90) {
+                    mp = new MPolyLine(longitude, latitude, longitudeNew, latitudeNew, Color.argb(255, 255, 0, 0), width);
                 }
                 l = mMap.addPolyline(new PolylineOptions()
                         .add(new LatLng(mp.getStartingLatitude(), mp.getStartingLongitude()), new LatLng(mp.getEndingLatitude(), mp.getEndingLongitude()))
@@ -74,20 +74,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 );
                 trip.paths.add(new Path(new MLocation(cLoc.getSpeed(), latitude, longitude), new MLocation(location.getSpeed(), latitudeNew, longitudeNew), mp, Color.DKGRAY, (int) (System.currentTimeMillis() - time) / 1000));
                 cLoc = location;
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
             }
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
         }
-        
+
         private int checkPaths(int i, double longitudeNew, double latitudeNew) {
             for (Trip t : currentUser.getTrips()) {
                 for (Path p : t.getPaths()) {
-                    
+
                     if (p.getEndLocation().getLatitude() >= (latitudeNew - .0004) && p.getEndLocation().getLatitude() >= (latitudeNew + .0004) ||
                             p.getStartLocation().getLatitude() >= (latitudeNew - .0004) && p.getStartLocation().getLatitude() >= (latitudeNew + .0004)) {
                         if (p.getEndLocation().getLongitude() >= (longitudeNew - .0004) && p.getEndLocation().getLongitude() >= (longitudeNew + .0004) ||
-                                p.getStartLocation().getLongitude() >= (longitudeNew - .0004) && p.getStartLocation().getLongitude() >= (longitudeNew + .0004))
-                        {
+                                p.getStartLocation().getLongitude() >= (longitudeNew - .0004) && p.getStartLocation().getLongitude() >= (longitudeNew + .0004)) {
                             i += 5;
                             i = i > 50 ? 50 : i;
                         }
@@ -96,21 +95,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             return i;
         }
-        
-        
+
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {
         }
-        
+
         @Override
         public void onProviderEnabled(String s) {
         }
-        
+
         @Override
         public void onProviderDisabled(String s) {
         }
     };
-    
+    private boolean mLocationPermissionGranted;
+    private DrawerLayout mDrawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         String[] keys = getIntent().getExtras().keySet().toArray(new String[1]);
@@ -121,6 +121,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         thisRef = this;
         currentUser = FirebaseAccessor.getUserModel();
+
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setActionBar(toolbar);
+
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+                menuItem -> {
+                    // set item as selected to persist highlight
+                    menuItem.setChecked(true);
+                    // close drawer when item is tapped
+                    mDrawerLayout.closeDrawers();
+
+                    // Add code here to update the UI based on the item selected
+                    // For example, swap UI fragments here
+
+                    return true;
+                });
     }
 
     @Override
@@ -133,9 +152,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
                             .color(p.getColor())
                     );
-                    if(p.getPl() != null){
+                    if (p.getPl() != null) {
                         l.setWidth(p.getPl().getWidth());
-                    }else{
+                    } else {
                         l.setWidth(5);
                     }
                 }
@@ -217,13 +236,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (Path p : t.getPaths()) {
                     Polyline l = mMap.addPolyline(new PolylineOptions()
                             .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
-
-
                     );
-                    if(p.getPl() != null) {
+                    if (p.getPl() != null) {
                         l.setWidth(p.getPl().getWidth());
                         l.setColor(p.getPl().getColor());
-                    }else{
+                    } else {
                         l.setWidth(5);
                         l.setColor(Color.BLACK);
                     }
@@ -239,7 +256,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateUser() {
         if (FirebaseAccessor.updateUserModel(currentUser)) {
-            Toast.makeText(thisRef, "Trip Saved !", Toast.LENGTH_LONG).show();
+            Toast.makeText(thisRef, "Trip Saved!", Toast.LENGTH_LONG).show();
         }
         mMap.clear();
         for (Trip t : currentUser.getTrips()) {
@@ -248,9 +265,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
                         .color(p.getColor())
                 );
-                if(p.getPl() != null){
+                if (p.getPl() != null) {
                     l.setWidth(p.getPl().getWidth());
-                }else{
+                } else {
                     l.setWidth(5);
                 }
             }

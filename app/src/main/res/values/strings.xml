@@ -20,4 +20,6 @@
     <string name="startTrip">Start New Trip</string>
     <string name="endTrip">End Trip</string>
     <string name="logo">pthfndr logo</string>
+    <string name="drawer1">Profile</string>
+    <string name="drawer2">Sign Out</string>
 </resources>
