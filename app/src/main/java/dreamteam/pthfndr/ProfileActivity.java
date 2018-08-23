@@ -11,6 +11,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -19,6 +20,8 @@ import dreamteam.pthfndr.models.FirebaseAccessor;
 import dreamteam.pthfndr.models.User;
 
 public class ProfileActivity extends AppCompatActivity {
+    
+    private static final DecimalFormat DECIMAL_FORMATTER = new DecimalFormat(".##");
     
     private User user;
     private TextView nameTextView;
@@ -55,12 +58,12 @@ public class ProfileActivity extends AppCompatActivity {
             SimpleDateFormat df = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
             joinDateTextView.setText(df.format(date));
             int size = user.getTrips().size();
-            totalTripsTextView.setText(String.valueOf(size));
-            totalTimeTextView.setText(String.valueOf(getTotalTime(user)));
-            totalDistanceTextView.setText(String.valueOf(getTotalDistance(user)));
-            averageDistanceTextView.setText(String.valueOf(getAverageDistance(user)));
-            maxSpeedTextView.setText(String.valueOf(getMaxSpeed(user)));
-            averageSpeedTextView.setText(String.valueOf(getAverageSpeed(user)));
+            totalTripsTextView.setText(DECIMAL_FORMATTER.format(size));
+            totalTimeTextView.setText(DECIMAL_FORMATTER.format(getTotalTime(user)));
+            totalDistanceTextView.setText(DECIMAL_FORMATTER.format(getTotalDistance(user)));
+            averageDistanceTextView.setText(DECIMAL_FORMATTER.format(getAverageDistance(user)));
+            maxSpeedTextView.setText(DECIMAL_FORMATTER.format(getMaxSpeed(user)));
+            averageSpeedTextView.setText(DECIMAL_FORMATTER.format(getAverageSpeed(user)));
         }
     }
 

@@ -132,6 +132,15 @@ public class Trip implements Comparable<Trip>, Parcelable {
     }
     
     @Override
+    public String toString() {
+        String text = "Date:\t" + this.getDate().toString();
+        text += "\nTime:\t" + this.getTime();
+        text += "\nDistance:\t" + this.getDistance();
+        return text;
+    }
+
+    
+    @Override
     public int compareTo(Trip other) {
         return Comparators.DATE.compare(this, other);
     }

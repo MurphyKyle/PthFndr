@@ -1,21 +1,26 @@
 package dreamteam.pthfndr;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.GridLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import java.sql.Time;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.zip.Inflater;
+import java.util.List;
+import java.util.Locale;
 
 import dreamteam.pthfndr.models.Trip;
 import dreamteam.pthfndr.models.User;
@@ -25,6 +30,9 @@ import dreamteam.pthfndr.models.User;
  */
 public class TripHistoryActivity extends AppCompatActivity {
 	
+	protected static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("EEE, MMM d, yy", Locale.US);
+	protected static final DecimalFormat DECIMAL_FORMATTER = new DecimalFormat(".##");
+	
 	private User theUser;
 	private TextView txtDate;
 	private TextView txtTime;
@@ -32,7 +40,6 @@ public class TripHistoryActivity extends AppCompatActivity {
 	private TextView txtMaxSpeed;
 	private TextView txtAverageSpeed;
 	private ListView tripListView;
-	
 	private ArrayList<Trip> activeTrips = new ArrayList<>();
 	
 	@Override
@@ -42,6 +49,7 @@ public class TripHistoryActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_trip_history);
 		// set the view children
 		setViewObjects();
+		resetView();
 		
 		// ignoring what the parcel is actually called..
 		if (getIntent().getExtras() != null) {
@@ -53,7 +61,10 @@ public class TripHistoryActivity extends AppCompatActivity {
 			
 			if (trips.size() > 0) {
 				// build the list of selectable trips
-				buildTripList(trips);
+				//buildTripList(trips);
+				TripAdapter adapter = new TripAdapter(this, R.layout.trip_view_row, trips);
+//				ArrayAdapter<Trip> adapter = new ArrayAdapter<Trip>(this, R.layout.trip_view_row, trips);
+				tripListView.setAdapter(adapter);
 			} else {
 				// notify if the user has no trips to view
 				setEmptyTripList();
@@ -85,14 +96,17 @@ public class TripHistoryActivity extends AppCompatActivity {
 	 * Updates the view with the selected/de-selected trip
 	 * @param view the view containing the button caller
 	 */
-	public void setAddTripData(View view) {
+	public void updateTripData(View view) {
 		// get the calling button
-		ToggleButton tog = (ToggleButton) view.getRootView();
+		GridLayout layout = (GridLayout) view;
 		// get its trip
-		Trip trip = (Trip) tog.getTag();
+		TripAdapter.ViewHolder holder = (TripAdapter.ViewHolder) layout.getTag();
+		holder.isSelected = !holder.isSelected;
+		Trip trip = holder.trip;
 		
-		if (tog.isSelected()) {
+		if (holder.isSelected) {
 			// add data to view
+			layout.setBackgroundColor(getResources().getColor(R.color.colorActiveTrip));
 			if (getActiveTrips().size() == 0) {
 				// first trip entry
 				setFirstTripData(trip);
@@ -102,8 +116,11 @@ public class TripHistoryActivity extends AppCompatActivity {
 			}
 			getActiveTrips().add(trip);
 		} else {
-			// subtract data from view
-			subtractTripUpdateToView(trip);
+			// subtract data from view if there are more than 1 trip
+			if (getActiveTrips().size() - 1 > 0) {
+				subtractTripUpdateToView(trip);
+			}
+			layout.setBackgroundColor(getResources().getColor(R.color.colorInactiveTrip));
 			getActiveTrips().remove(trip);
 		}
 		
@@ -122,11 +139,11 @@ public class TripHistoryActivity extends AppCompatActivity {
 	 * Resets the TextViews in the activity
 	 */
 	private void resetView() {
-		getTxtAverageSpeed().setText("");
-		getTxtMaxSpeed().setText("");
-		getTxtDistance().setText("");
-		getTxtDate().setText("");
-		getTxtTime().setText("");
+		getTxtAverageSpeed().setText("-");
+		getTxtMaxSpeed().setText("-");
+		getTxtDistance().setText("-");
+		getTxtDate().setText("-");
+		getTxtTime().setText("-");
 	}
 	
 	/**
@@ -141,16 +158,21 @@ public class TripHistoryActivity extends AppCompatActivity {
 			Collections.sort(trips, Trip.Comparators.DATE);
 			
 			// get earliest date
-			String earliest = trips.get(0).getDate().toString();
+			Date earliest = trips.get(0).getDate();
 			
 			// get latest date
-			String latest = trips.get(trips.size() - 1).getDate().toString();
+			Date latest = trips.get(trips.size() - 1).getDate();
 			
-			// set date text to range
-			String text = earliest + " - " + latest;
-			getTxtDate().setText(text);
+			if (DATE_FORMATTER.format(earliest).equals(DATE_FORMATTER.format(latest))) {
+				String tostring = earliest.toString();
+				getTxtDate().setText(DATE_FORMATTER.format(trips.get(0).getDate()));
+			} else {
+				// set date text to range
+				String text = DATE_FORMATTER.format(earliest)+ " - " + DATE_FORMATTER.format(latest);
+				getTxtDate().setText(text);
+			}
 		} else {
-			getTxtDate().setText(trips.get(0).getDate().toString());
+			getTxtDate().setText(DATE_FORMATTER.format(trips.get(0).getDate()));
 		}
 	}
 	
@@ -159,12 +181,12 @@ public class TripHistoryActivity extends AppCompatActivity {
 	 * @param trip the Trip to set the view with
 	 */
 	private void setFirstTripData(Trip trip) {
-		getTxtDate().setText(trip.getDate().toString());
+		getTxtDate().setText(DATE_FORMATTER.format(trip.getDate()));
 //		String timeString = formatTimeString((String)trip.getTimeObj(false));
-//		getTxtTime().setText(timeString);
-		getTxtDistance().setText(String.valueOf(trip.getDistance()));
-		getTxtMaxSpeed().setText(String.valueOf(trip.getMaxSpeed()));
-		getTxtAverageSpeed().setText(String.valueOf(trip.getAverageSpeed()));
+		getTxtTime().setText(DECIMAL_FORMATTER.format(trip.getTime()));
+		getTxtDistance().setText(DECIMAL_FORMATTER.format(trip.getDistance()));
+		getTxtMaxSpeed().setText(DECIMAL_FORMATTER.format(trip.getMaxSpeed()));
+		getTxtAverageSpeed().setText(DECIMAL_FORMATTER.format(trip.getAverageSpeed()));
 	}
 	
 	/**
@@ -185,15 +207,17 @@ public class TripHistoryActivity extends AppCompatActivity {
 		// distance
 		TextView txtDistance = getTxtDistance();
 		float distance = Float.parseFloat(txtDistance.getText().toString());
-		txtDistance.setText(String.valueOf(distance + trip.getDistance()));
+		txtDistance.setText(DECIMAL_FORMATTER.format(distance + trip.getDistance()));
 		
 		// time
-		TextView txtTime = getTxtTime();
+		float currentTime = Float.parseFloat( (String)getTxtTime().getText() );
+		float newTime = currentTime + trip.getTime();
+		getTxtTime().setText(DECIMAL_FORMATTER.format(newTime));
 		// get in hh:mm:ss
 //		Date tripTime = (Time) trip.getTimeObj(true);
 		
 		// get time obj from view
-		Date oldTime = Time.valueOf(getJDBCTimeFormat(txtTime.getText().toString()));
+//		Date oldTime = Time.valueOf(getJDBCTimeFormat(txtTime.getText().toString()));
 //		long newMilis = oldTime.getTime() + tripTime.getTime();
 		
 		// create the new time to display to view
@@ -209,15 +233,19 @@ public class TripHistoryActivity extends AppCompatActivity {
 		// distance
 		TextView txtDistance = getTxtDistance();
 		float distance = Float.parseFloat(txtDistance.getText().toString());
-		txtDistance.setText(String.valueOf(distance - trip.getDistance()));
+		txtDistance.setText(DECIMAL_FORMATTER.format(distance - trip.getDistance()));
+		
+		float currentTime = Float.parseFloat( (String)getTxtTime().getText() );
+		float newTime = currentTime - trip.getTime();
+		getTxtTime().setText(DECIMAL_FORMATTER.format(newTime));
 		
 		// time
-		TextView txtTime = getTxtTime();
+//		TextView txtTime = getTxtTime();
 		// get in hh:mm:ss
 //		Date tripTime = (Time) trip.getTimeObj(true);
 		
 		// get time obj from view
-		Date oldTime = Time.valueOf(getJDBCTimeFormat(txtTime.getText().toString()));
+//		Date oldTime = Time.valueOf(getJDBCTimeFormat(txtTime.getText().toString()));
 //		long newMilis = oldTime.getTime() - tripTime.getTime();
 		
 		// create the new time to display to view
@@ -263,9 +291,9 @@ public class TripHistoryActivity extends AppCompatActivity {
 		
 		if (size > 1) {
 			Collections.sort(trips, Trip.Comparators.MAXSPEED);
-			getTxtMaxSpeed().setText(String.valueOf(trips.get(size - 1).getMaxSpeed()));
+			getTxtMaxSpeed().setText(DECIMAL_FORMATTER.format(trips.get(size - 1).getMaxSpeed()));
 		} else {
-			getTxtMaxSpeed().setText(String.valueOf(trips.get(0).getMaxSpeed()));
+			getTxtMaxSpeed().setText(DECIMAL_FORMATTER.format(trips.get(0).getMaxSpeed()));
 		}
 	}
 	
@@ -282,9 +310,9 @@ public class TripHistoryActivity extends AppCompatActivity {
 				total += t.getAverageSpeed();
 			}
 			
-			getTxtAverageSpeed().setText(String.valueOf(total / size));
+			getTxtAverageSpeed().setText(DECIMAL_FORMATTER.format(total / size));
 		} else {
-			getTxtAverageSpeed().setText(String.valueOf(trips.get(0).getAverageSpeed()));
+			getTxtAverageSpeed().setText(DECIMAL_FORMATTER.format(trips.get(0).getAverageSpeed()));
 		}
 	}
 	
@@ -300,12 +328,12 @@ public class TripHistoryActivity extends AppCompatActivity {
 			text += "\nDistance:\t" + t.getDistance();
 			tog.setText(text);
 			tog.setTag(t);
-//			tog.callOnClick(setAddTripData(tog)); // if listener doesn't work out
-            tog.setOnClickListener(this::setAddTripData);
+//			tog.callOnClick(updateTripData(tog)); // if listener doesn't work out
+            tog.setOnClickListener(this::updateTripData);
             getTripListView().addFooterView(tog, t, true);
         }
     }
-	
+    
 	
 	/*
 	Getters and Setters
@@ -348,21 +376,25 @@ public class TripHistoryActivity extends AppCompatActivity {
     }
 
     
-	protected class TripAdapter extends BaseAdapter {
-		private ArrayList<Trip> trips = new ArrayList<>();
+	protected class TripAdapter extends ArrayAdapter<Trip> {
+    	private final Activity context;
+		private final ArrayList<Trip> trips;
 		
-    	public TripAdapter(ArrayList<Trip> trips) {
-    	    this.trips = trips;
-	    }
-	    
-	    public TripAdapter(Trip... trips) {
-		    this.trips.addAll(Arrays.asList(trips));
-	    }
-    	
-	    
-	    
-	    
-	    
+		class ViewHolder {
+			public Trip trip;
+			public boolean isSelected = false;
+			public GridLayout tog;
+			public TextView date;
+			public TextView time;
+			public TextView distance;
+		}
+		
+		public TripAdapter(@NonNull Activity context, int resource, @NonNull List<Trip> objects) {
+			super(context, resource, objects);
+			this.context = context;
+			this.trips = (ArrayList<Trip>) objects;
+		}
+		
 		@Override
 		public int getCount() {
 			return this.trips.size();
@@ -379,10 +411,36 @@ public class TripHistoryActivity extends AppCompatActivity {
 		}
 		
 		@Override
-		public View getView(int i, View view, ViewGroup viewGroup) {
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View rowView = convertView;
+			// reuse views
+			if (rowView == null) {
+				// get activity infater
+				android.view.LayoutInflater inflater = context.getLayoutInflater();
+				
+				// inflate the list view row
+				rowView = inflater.inflate(R.layout.trip_view_row, null);
+				
+				// configure view holder - acts as a cache for the view data
+				ViewHolder viewHolder = new ViewHolder();
+				viewHolder.tog = (GridLayout) rowView.findViewById(R.id.trip_button);
+				viewHolder.tog.setBackgroundColor(getResources().getColor(R.color.colorInactiveTrip));
+				viewHolder.tog.setOnClickListener(TripHistoryActivity.this::updateTripData);
+				viewHolder.date = (TextView) rowView.findViewById(R.id.trip_date);
+				viewHolder.time = (TextView) rowView.findViewById(R.id.trip_time);
+				viewHolder.distance = (TextView) rowView.findViewById(R.id.trip_distance);
+				rowView.setTag(viewHolder);
+			}
 			
-    		
-    		return null;
+			// fill data
+			ViewHolder holder = (ViewHolder) rowView.getTag();
+			Trip t = trips.get(position);
+			holder.trip = t;
+			holder.date.setText(DATE_FORMATTER.format(t.getDate()));
+			holder.time.setText(DECIMAL_FORMATTER.format(t.getTime()));
+			holder.distance.setText(DECIMAL_FORMATTER.format(t.getDistance()));
+			
+			return rowView;
 		}
 	}
 }
