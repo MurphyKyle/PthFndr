@@ -4,14 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.zip.Inflater;
 
 import dreamteam.pthfndr.models.Trip;
 import dreamteam.pthfndr.models.User;
@@ -332,7 +336,7 @@ public class TripHistoryActivity extends AppCompatActivity {
     }
 
     public TextView getTxtAverageSpeed() {
-        return txtAverageSpeed;
+    	return txtAverageSpeed;
     }
 
     public ListView getTripListView() {
@@ -342,4 +346,43 @@ public class TripHistoryActivity extends AppCompatActivity {
     public ArrayList<Trip> getActiveTrips() {
         return activeTrips;
     }
+
+    
+	protected class TripAdapter extends BaseAdapter {
+		private ArrayList<Trip> trips = new ArrayList<>();
+		
+    	public TripAdapter(ArrayList<Trip> trips) {
+    	    this.trips = trips;
+	    }
+	    
+	    public TripAdapter(Trip... trips) {
+		    this.trips.addAll(Arrays.asList(trips));
+	    }
+    	
+	    
+	    
+	    
+	    
+		@Override
+		public int getCount() {
+			return this.trips.size();
+		}
+		
+		@Override
+		public Trip getItem(int i) {
+			return this.trips.get(i);
+		}
+		
+		@Override
+		public long getItemId(int i) {
+			return 0;
+		}
+		
+		@Override
+		public View getView(int i, View view, ViewGroup viewGroup) {
+			
+    		
+    		return null;
+		}
+	}
 }

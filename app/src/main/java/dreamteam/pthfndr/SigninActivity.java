@@ -50,11 +50,6 @@ public class SigninActivity extends AppCompatActivity {
                 if (FirebaseAccessor.getUserModel() == null) {
                     // no current user in the db
                     newUser = new User();
-                    
-                    newUser.addTrip(randomTrip());
-                    newUser.addTrip(randomTrip());
-                    newUser.addTrip(randomTrip());
-                    
                     // create a new user in the pthfndr database
                     if (FirebaseAccessor.createUserModel(newUser)) {
                         Toast.makeText(thisRef, "New User Saved!", Toast.LENGTH_LONG).show();
@@ -81,40 +76,4 @@ public class SigninActivity extends AppCompatActivity {
                 .setAvailableProviders(providers)
                 .build().setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), RC_SIGN_IN);
     }
-
-    private Trip randomTrip() {
-        Trip trip = new Trip();
-        trip.setDateMilis(System.currentTimeMillis());
-        trip.setAverageSpeed(generateRandomFloat(100));
-        trip.setDistance(generateRandomFloat(1000));
-        trip.setMaxSpeed(generateRandomFloat(200));
-        trip.setTime(generateRandomFloat(100));
-        MLocation m1 = new MLocation(1, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112));
-        MLocation m2 = new MLocation(1, generateRandomDoubleFromRange(39, 41), generateRandomDoubleFromRange(-110, -112));
-        MPolyLine pl = new MPolyLine(0,0,0,0,Color.argb(255, 255, 255, 255), 5);
-        trip.paths.add(new Path(m1, m2, pl,0,0));
-        return trip;
-    }
-
-    private float generateRandomFloat(float max) {
-        float leftLimit = 1F;
-        float rightLimit = max;
-        float generatedFloat = leftLimit + new Random().nextFloat() * (rightLimit - leftLimit);
-        return generatedFloat;
-    }
-
-    private double generateRandomDouble(double max) {
-        double leftLimit = 1D;
-        double rightLimit = max;
-        double generatedDouble = leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
-        return generatedDouble;
-    }
-
-    private double generateRandomDoubleFromRange(double min, double max) {
-        double leftLimit = min;
-        double rightLimit = max;
-        double generatedDouble = leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
-        return generatedDouble;
-    }
-
 }

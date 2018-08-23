@@ -17,7 +17,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -58,14 +57,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 MPolyLine mp = null;
                 if (currentSpeed <= 10) {
                     mp = new MPolyLine(longitude, latitude, longitudeNew, latitudeNew, Color.argb(255, 0, 255, 0), width);
-                } else if (currentSpeed > 10 && currentSpeed <= 30) {
+                } else if (currentSpeed >= 11 && currentSpeed <= 30) {
                     mp = new MPolyLine(longitude, latitude, longitudeNew, latitudeNew, Color.argb(255, 128, 255, 0), width);
-                } else if (currentSpeed > 30 && currentSpeed <= 60) {
+                } else if (currentSpeed >= 31 && currentSpeed <= 60) {
                     mp = new MPolyLine(longitude, latitude, longitudeNew, latitudeNew, Color.argb(255, 255, 255, 0), width);
-                } else if (currentSpeed > 60 && currentSpeed <= 90) {
+                } else if (currentSpeed >= 61 && currentSpeed <= 90) {
                     mp = new MPolyLine(longitude, latitude, longitudeNew, latitudeNew, Color.argb(255, 255, 163, 0), width);
-                } else if (currentSpeed > 90) {
+                } else if (currentSpeed >= 91) {
                     mp = new MPolyLine(longitude, latitude, longitudeNew, latitudeNew, Color.argb(255, 255, 0, 0), width);
+                } else {
+                    mp = new MPolyLine(longitude, latitude, longitudeNew, latitudeNew, Color.argb(255, 0, 255, 0), width);
+
                 }
                 l = mMap.addPolyline(new PolylineOptions()
                         .add(new LatLng(mp.getStartingLatitude(), mp.getStartingLongitude()), new LatLng(mp.getEndingLatitude(), mp.getEndingLongitude()))
@@ -82,13 +84,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         private int checkPaths(int i, double longitudeNew, double latitudeNew) {
             for (Trip t : currentUser.getTrips()) {
                 for (Path p : t.getPaths()) {
-
-                    if (p.getEndLocation().getLatitude() >= (latitudeNew - .0004) && p.getEndLocation().getLatitude() >= (latitudeNew + .0004) ||
-                            p.getStartLocation().getLatitude() >= (latitudeNew - .0004) && p.getStartLocation().getLatitude() >= (latitudeNew + .0004)) {
-                        if (p.getEndLocation().getLongitude() >= (longitudeNew - .0004) && p.getEndLocation().getLongitude() >= (longitudeNew + .0004) ||
-                                p.getStartLocation().getLongitude() >= (longitudeNew - .0004) && p.getStartLocation().getLongitude() >= (longitudeNew + .0004)) {
+                    if (p.getEndLocation().getLatitude() >= (latitudeNew - .0004) && p.getEndLocation().getLatitude() <= (latitudeNew + .0004) ||
+                            p.getStartLocation().getLatitude() >= (latitudeNew - .0004) && p.getStartLocation().getLatitude() <= (latitudeNew + .0004)) {
+                        if (p.getEndLocation().getLongitude() >= (longitudeNew - .0004) && p.getEndLocation().getLongitude() <= (longitudeNew + .0004) ||
+                                p.getStartLocation().getLongitude() >= (longitudeNew - .0004) && p.getStartLocation().getLongitude() <= (longitudeNew + .0004)) {
                             i += 5;
-                            i = i > 50 ? 50 : i;
+                            i = i > 100 ? 100 : i;
                         }
                     }
                 }
@@ -263,7 +264,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             for (Path p : t.getPaths()) {
                 Polyline l = mMap.addPolyline(new PolylineOptions()
                         .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
-                        .color(p.getColor())
+                        .color(p.getPl().getColor())
+                        .width(p.getPl().getWidth())
                 );
                 if (p.getPl() != null) {
                     l.setWidth(p.getPl().getWidth());
