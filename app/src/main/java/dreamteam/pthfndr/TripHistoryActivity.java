@@ -2,7 +2,6 @@ package dreamteam.pthfndr;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.GridLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -164,7 +162,6 @@ public class TripHistoryActivity extends AppCompatActivity {
 			Date latest = trips.get(trips.size() - 1).getDate();
 			
 			if (DATE_FORMATTER.format(earliest).equals(DATE_FORMATTER.format(latest))) {
-				String tostring = earliest.toString();
 				getTxtDate().setText(DATE_FORMATTER.format(trips.get(0).getDate()));
 			} else {
 				// set date text to range
@@ -187,16 +184,6 @@ public class TripHistoryActivity extends AppCompatActivity {
 		getTxtDistance().setText(DECIMAL_FORMATTER.format(trip.getDistance()));
 		getTxtMaxSpeed().setText(DECIMAL_FORMATTER.format(trip.getMaxSpeed()));
 		getTxtAverageSpeed().setText(DECIMAL_FORMATTER.format(trip.getAverageSpeed()));
-	}
-	
-	/**
-	 *
-	 * @param timeObjString string representation of a time object in "hh:mm:ss" format
-	 * @return "# Hr # Min # Sec" representation of the time for the view
-	 */
-	private String formatTimeString(String timeObjString) {
-		String[] hms = timeObjString.split(":");
-		return String.format("%1$s Hr %2$s Min %3$s Sec", hms[0], hms[1], hms[2]);
 	}
 	
 	/**
@@ -238,37 +225,6 @@ public class TripHistoryActivity extends AppCompatActivity {
 		float currentTime = Float.parseFloat( (String)getTxtTime().getText() );
 		float newTime = currentTime - trip.getTime();
 		getTxtTime().setText(DECIMAL_FORMATTER.format(newTime));
-		
-		// time
-//		TextView txtTime = getTxtTime();
-		// get in hh:mm:ss
-//		Date tripTime = (Time) trip.getTimeObj(true);
-		
-		// get time obj from view
-//		Date oldTime = Time.valueOf(getJDBCTimeFormat(txtTime.getText().toString()));
-//		long newMilis = oldTime.getTime() - tripTime.getTime();
-		
-		// create the new time to display to view
-//		Time newTime = new Time(newMilis);
-//		txtTime.setText(formatTimeString(newTime.toString()));
-	}
-	
-	/**
-	 * Converts time from the view format to standard format
-	 * @param viewFormat time in the view format: "# Hr # Min # Sec"
-	 * @return time in "hh:mm:ss" format
-	 */
-	private String getJDBCTimeFormat(String viewFormat) {
-		// where viewFormat == "%1$s Hr %2$s Min %3$s Sec"
-		// return as hh:mm:ss
-		if (viewFormat != null) {
-			viewFormat = viewFormat.replace(" Hr ", ":");
-			viewFormat = viewFormat.replace(" Min ", ":");
-			viewFormat = viewFormat.replace(" Sec", "");
-		}
-
-		// may be null
-		return viewFormat;
 	}
 	
 	/**
@@ -316,24 +272,6 @@ public class TripHistoryActivity extends AppCompatActivity {
 		}
 	}
 	
-	/**
-	 * Fills the trips list view with toggle buttons representing each trip
-	 * @param trips the list of trips to use
-	 */
-	private void buildTripList(ArrayList<Trip> trips) {
-		for (Trip t : trips) {
-			ToggleButton tog = new ToggleButton(this);
-			String text = "Date:\t" + t.getDate().toString();
-			text += "\nTime:\t" + t.getTime();
-			text += "\nDistance:\t" + t.getDistance();
-			tog.setText(text);
-			tog.setTag(t);
-//			tog.callOnClick(updateTripData(tog)); // if listener doesn't work out
-            tog.setOnClickListener(this::updateTripData);
-            getTripListView().addFooterView(tog, t, true);
-        }
-    }
-    
 	
 	/*
 	Getters and Setters
@@ -381,15 +319,15 @@ public class TripHistoryActivity extends AppCompatActivity {
 		private final ArrayList<Trip> trips;
 		
 		class ViewHolder {
-			public Trip trip;
-			public boolean isSelected = false;
-			public GridLayout tog;
+			private Trip trip;
+			private boolean isSelected = false;
+			private GridLayout tog;
 			public TextView date;
 			public TextView time;
-			public TextView distance;
+			private TextView distance;
 		}
 		
-		public TripAdapter(@NonNull Activity context, int resource, @NonNull List<Trip> objects) {
+		private TripAdapter(@NonNull Activity context, int resource, @NonNull List<Trip> objects) {
 			super(context, resource, objects);
 			this.context = context;
 			this.trips = (ArrayList<Trip>) objects;
@@ -411,7 +349,8 @@ public class TripHistoryActivity extends AppCompatActivity {
 		}
 		
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		@NonNull
+		public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 			View rowView = convertView;
 			// reuse views
 			if (rowView == null) {
@@ -419,16 +358,16 @@ public class TripHistoryActivity extends AppCompatActivity {
 				android.view.LayoutInflater inflater = context.getLayoutInflater();
 				
 				// inflate the list view row
-				rowView = inflater.inflate(R.layout.trip_view_row, null);
+				rowView = inflater.inflate(R.layout.trip_view_row, parent);
 				
 				// configure view holder - acts as a cache for the view data
 				ViewHolder viewHolder = new ViewHolder();
-				viewHolder.tog = (GridLayout) rowView.findViewById(R.id.trip_button);
+				viewHolder.tog = rowView.findViewById(R.id.trip_button);
 				viewHolder.tog.setBackgroundColor(getResources().getColor(R.color.colorInactiveTrip));
 				viewHolder.tog.setOnClickListener(TripHistoryActivity.this::updateTripData);
-				viewHolder.date = (TextView) rowView.findViewById(R.id.trip_date);
-				viewHolder.time = (TextView) rowView.findViewById(R.id.trip_time);
-				viewHolder.distance = (TextView) rowView.findViewById(R.id.trip_distance);
+				viewHolder.date = rowView.findViewById(R.id.trip_date);
+				viewHolder.time = rowView.findViewById(R.id.trip_time);
+				viewHolder.distance = rowView.findViewById(R.id.trip_distance);
 				rowView.setTag(viewHolder);
 			}
 			
