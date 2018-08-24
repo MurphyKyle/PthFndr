@@ -122,22 +122,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         thisRef = this;
         currentUser = FirebaseAccessor.getUserModel();
-
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setActionBar(toolbar);
-
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 menuItem -> {
-                    // set item as selected to persist highlight
                     menuItem.setChecked(true);
-                    // close drawer when item is tapped
+
                     mDrawerLayout.closeDrawers();
 
-                    // Add code here to update the UI based on the item selected
-                    // For example, swap UI fragments here
+                    if (menuItem.getItemId() == R.id.nav_Profile) {
+                        Intent newIntent = new Intent(this, ProfileActivity.class);
+                        startActivity(newIntent);
+                    } else if (menuItem.getItemId() == R.id.nav_SignOut) {
+                        Intent intent = new Intent(this, SigninActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
 
                     return true;
                 });
@@ -179,6 +180,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
         cLoc = location;
         latitude = location.getLatitude();
         longitude = location.getLongitude();

@@ -84,10 +84,11 @@ public class ProfileActivity extends AppCompatActivity {
     public void finalizeSignOut() {
         // this does not work properly?
         // ends up as a blank screen, needs to be the firebase oAuth screen
-        SigninActivity signIn = new SigninActivity();
-        signIn.signIn(null); // breaks on this line
-//        Intent intent = new Intent(this, SigninActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        SigninActivity signIn = new SigninActivity();
+//        signIn.signIn(null); // breaks on this line
+        Intent intent = new Intent(this, SigninActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
 //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Removes other Activities from stack
 //        startActivity(intent);
     }
