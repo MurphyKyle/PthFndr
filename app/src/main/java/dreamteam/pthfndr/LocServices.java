@@ -1,17 +1,12 @@
 package dreamteam.pthfndr;
 
 import android.app.IntentService;
-import android.app.Service;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -27,13 +22,13 @@ import dreamteam.pthfndr.models.Trip;
 import dreamteam.pthfndr.models.User;
 
 public class LocServices extends IntentService {
-    private GoogleMap mMap;
     boolean isActive = false;
     double latitude = 0;
     double longitude = 0;
     Location cLoc;
     Trip trip = new Trip(Calendar.getInstance().getTime());
     long time = 0;
+    private GoogleMap mMap;
     private User currentUser;
 
     private final LocationListener locationListener = new LocationListener() {
@@ -101,10 +96,6 @@ public class LocServices extends IntentService {
         }
     };
 
-    public LocationListener getLocationListener(){
-        return locationListener;
-    }
-
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
@@ -116,11 +107,17 @@ public class LocServices extends IntentService {
         mMap = m;
     }
 
+    public LocationListener getLocationListener() {
+        return locationListener;
+    }
+
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
     }
 
-    public void NewTrip(){trip = new Trip();}
+    public void NewTrip() {
+        trip = new Trip();
+    }
 
 }

@@ -167,15 +167,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.clear();
             for (Trip t : currentUser.getTrips()) {
                 for (Path p : t.getPaths()) {
-                    Polyline l = mMap.addPolyline(new PolylineOptions()
-                            .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
-                    );
-                    if (p.getPl() != null) {
-                        l.setWidth(p.getPl().getWidth());
-                        l.setColor(p.getPl().getColor());
-                    } else {
-                        l.setWidth(5);
-                        l.setColor(Color.BLACK);
+                    if (p.getStartLocation() != null && p.getEndLocation() != null) {
+                        Polyline l = mMap.addPolyline(new PolylineOptions()
+                                .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
+                        );
+                        if (p.getPl() != null) {
+                            l.setWidth(p.getPl().getWidth());
+                            l.setColor(p.getPl().getColor());
+                        } else {
+                            l.setWidth(5);
+                            l.setColor(Color.BLACK);
+                        }
                     }
                 }
             }
@@ -194,15 +196,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.clear();
         for (Trip t : currentUser.getTrips()) {
             for (Path p : t.getPaths()) {
-                Polyline l = mMap.addPolyline(new PolylineOptions()
-                        .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
-                        .color(p.getPl().getColor())
-                        .width(p.getPl().getWidth())
-                );
-                if (p.getPl() != null) {
-                    l.setWidth(p.getPl().getWidth());
-                } else {
-                    l.setWidth(5);
+                if (p.getStartLocation() != null && p.getEndLocation() != null) {
+                    Polyline l = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
+                            .color(p.getPl().getColor())
+                            .width(p.getPl().getWidth())
+                    );
+                    if (p.getPl() != null) {
+                        l.setWidth(p.getPl().getWidth());
+                    } else {
+                        l.setWidth(5);
+                    }
                 }
             }
         }
