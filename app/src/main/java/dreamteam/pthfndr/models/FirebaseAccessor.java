@@ -29,10 +29,10 @@ public abstract class FirebaseAccessor {
 	public static void setFireBaseResources() {
 		// get the users 'table' from the DB instance
 		FIREBASE = FIREBASE == null ? FirebaseDatabase.getInstance().getReference().child("users") : FIREBASE;
-		
+
 		// get the current firebase auth user
 		AUTH_USER = AUTH_USER == null ? FirebaseAuth.getInstance().getCurrentUser() : AUTH_USER;
-		
+
 		// adds the single value event listener to get the current firebase PthFndr User
 		if (USER_MODEL == null) {
 			getUserModelSnapshot();
@@ -97,7 +97,7 @@ public abstract class FirebaseAccessor {
 			
 			// set the data
 			firebaseChild.put(userKey, userValue);
-			
+
 			// update the db
 			DatabaseReference.CompletionListener completionListener = (databaseError, databaseReference) -> {
 				if (databaseError != null) {
@@ -105,11 +105,12 @@ public abstract class FirebaseAccessor {
 				}
 			};
 			
-			if (createUser) {
-				FIREBASE.setValue(firebaseChild, completionListener);
-			} else {
+//			if (createUser) {
+//
+//				FIREBASE.push().setValue(firebaseChild, completionListener);
+//			} else {
 				FIREBASE.updateChildren(firebaseChild, completionListener);
-			}
+//			}
 			
 			// set the model, don't wait for the firebase task
 			USER_MODEL = userModel;
