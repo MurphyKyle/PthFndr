@@ -3,7 +3,10 @@ package dreamteam.pthfndr;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,9 +23,9 @@ import dreamteam.pthfndr.models.FirebaseAccessor;
 import dreamteam.pthfndr.models.User;
 
 public class ProfileActivity extends AppCompatActivity {
-    
+
     private static final DecimalFormat DECIMAL_FORMATTER = new DecimalFormat(".##");
-    
+
     private User user;
     private TextView nameTextView;
     private TextView joinDateTextView;
@@ -32,6 +35,8 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView averageDistanceTextView;
     private TextView averageSpeedTextView;
     private TextView maxSpeedTextView;
+    private DrawerLayout mDrawerLayout;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -45,13 +50,53 @@ public class ProfileActivity extends AppCompatActivity {
         averageDistanceTextView = findViewById(R.id.txtAverageDistance);
         averageSpeedTextView = findViewById(R.id.txtAverageSpeedOverall);
         maxSpeedTextView = findViewById(R.id.txtMaxSpeedOverall);
+
+        String[] keys = getIntent().getExtras().keySet().toArray(new String[1]);
+        currentUser = getIntent().getExtras().getParcelable(keys[0]);
+
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+                (MenuItem menuItem) -> {
+                    menuItem.setChecked(true);
+
+                    mDrawerLayout.closeDrawers();
+
+                    if (menuItem.getItemId() == R.id.nav_Profile) {
+                        Intent newIntent = new Intent(this, ProfileActivity.class);
+                        newIntent.putExtra("user", currentUser);
+                        startActivity(newIntent);
+                    } else if (menuItem.getItemId() == R.id.nav_SignOut) {
+                        FirebaseAccessor.logout();
+                        Intent intent = new Intent(this, SigninActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("user", currentUser);
+                        startActivity(intent);
+                    } else if (menuItem.getItemId() == R.id.nav_Mpgs) {
+                        Intent newIntent = new Intent(this, MpgCalcActivity.class);
+                        newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        newIntent.putExtra("user", currentUser);
+                        startActivity(newIntent);
+                    } else if (menuItem.getItemId() == R.id.nav_History) {
+                        Intent newIntent = new Intent(this, TripHistoryActivity.class);
+                        newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        newIntent.putExtra("user", currentUser);
+                        startActivity(newIntent);
+                    } //else if (menuItem.getItemId() == R.id.nav_Map) {
+//                        Intent newIntent = new Intent(this, MapsActivity.class);
+//                        newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        startActivity(newIntent);
+//                    }
+                    return true;
+                });
     }
 
     @Override
     public void onStart() {
         super.onStart();
         user = FirebaseAccessor.getUserModel();
-        
+
         if (user != null) {
             nameTextView.setText(user.getName());
             Date date = new Date(FirebaseAccessor.getAuthUser().getMetadata().getCreationTimestamp());
@@ -80,7 +125,7 @@ public class ProfileActivity extends AppCompatActivity {
         tent.putExtra("user", user);
         startActivity(tent);
     }
-    
+
     public void finalizeSignOut() {
         FirebaseAccessor.logout();
         Intent intent = new Intent(this, SigninActivity.class);

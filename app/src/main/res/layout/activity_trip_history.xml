@@ -1,133 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/AppTheme">
+    android:fitsSystemWindows="true">
 
-    <GridLayout
-        android:id="@+id/infoGridView"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="2"
-        android:orientation="vertical"
-        android:padding="5dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_column="0"
-            android:layout_marginEnd="5dp"
-            android:layout_row="0"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/lblDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:text="@string/lbl_date"
-                android:textAlignment="textEnd" />
-
-            <TextView
-                android:id="@+id/lblTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:text="@string/lbl_time"
-                android:textAlignment="textEnd" />
-
-            <TextView
-                android:id="@+id/lblDistance"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:text="@string/lbl_distance"
-                android:textAlignment="textEnd" />
-
-            <TextView
-                android:id="@+id/lblMaxSpeed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:text="@string/lbl_max_speed"
-                android:textAlignment="textEnd" />
-
-            <TextView
-                android:id="@+id/lblAverageSpeed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/lbl_average_speed"
-                android:textAlignment="textEnd"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/txtMaxSpeed" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/btnViewTripMap"
+        <GridLayout
+            android:id="@+id/infoGridView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_columnSpan="2"
-            android:layout_marginEnd="30dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="5dp"
-            android:onClick="viewMapOnClick"
-            android:text="@string/btn_view_map"
-            app:layout_constraintTop_toBottomOf="@id/txtAverageSpeed" />
+            android:columnCount="2"
+            android:orientation="vertical"
+            android:padding="5dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Column 2 Stores The Values -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_column="1"
-            android:layout_row="0"
-            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_marginEnd="5dp"
+                android:layout_row="0"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/txtDate"
+                <TextView
+                    android:id="@+id/lblDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/lbl_date"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/lblTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/lbl_time"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/lblDistance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/lbl_distance"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/lblMaxSpeed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/lbl_max_speed"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/lblAverageSpeed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lbl_average_speed"
+                    android:textAlignment="textEnd"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txtMaxSpeed" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnViewTripMap"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp" />
+                android:layout_columnSpan="2"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="5dp"
+                android:onClick="viewMapOnClick"
+                android:text="@string/btn_view_map"
+                app:layout_constraintTop_toBottomOf="@id/txtAverageSpeed" />
 
-            <TextView
-                android:id="@+id/txtTime"
-                android:layout_width="match_parent"
+            <!-- Column 2 Stores The Values -->
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp" />
+                android:layout_column="1"
+                android:layout_row="0"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/txtDistance"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp" />
+                <TextView
+                    android:id="@+id/txtDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="5dp" />
 
-            <TextView
-                android:id="@+id/txtMaxSpeed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp" />
+                <TextView
+                    android:id="@+id/txtTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="5dp" />
 
-            <TextView
-                android:id="@+id/txtAverageSpeed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp" />
-        </LinearLayout>
-    </GridLayout>
+                <TextView
+                    android:id="@+id/txtDistance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="5dp" />
 
-    <ListView
-        android:id="@+id/tripListView"
+                <TextView
+                    android:id="@+id/txtMaxSpeed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="5dp" />
+
+                <TextView
+                    android:id="@+id/txtAverageSpeed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="5dp" />
+            </LinearLayout>
+        </GridLayout>
+
+        <ListView
+            android:id="@+id/tripListView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/infoGridView" />
+    </android.support.constraint.ConstraintLayout>
+
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/infoGridView" />
-</android.support.constraint.ConstraintLayout>
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        android:visibility="invisible"
+        app:headerLayout="@layout/header_layout"
+        app:menu="@menu/drawer_view">
+
+    </android.support.design.widget.NavigationView>
+
+</android.support.v4.widget.DrawerLayout>
