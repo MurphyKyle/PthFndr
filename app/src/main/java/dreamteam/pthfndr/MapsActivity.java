@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -178,12 +179,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         isActive = !isActive;
         ls.isActive = isActive;
 
-        Button b = findViewById(R.id.TripButton);
+        FloatingActionButton b = findViewById(R.id.TripButton);
         if (isActive) {
             if (ls.trip == null) {
                 ls.NewTrip();
             }
-            b.setText(R.string.endTrip);
+            b.setImageResource(R.drawable.stopsign);
         } else {
             mMap.clear();
             for (Trip t : currentUser.getTrips()) {
@@ -205,7 +206,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             ls.trip.endTrip();
             currentUser.addTrip(ls.trip);
             ls.NewTrip();
-            b.setText(R.string.startTrip);
+            b.setImageResource(R.drawable.map);
             updateUser();
         }
     }
