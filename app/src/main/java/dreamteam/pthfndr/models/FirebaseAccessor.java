@@ -1,5 +1,12 @@
 package dreamteam.pthfndr.models;
 
+import android.content.Context;
+
+import com.google.android.gms.auth.api.credentials.Credentials;
+import com.google.android.gms.auth.api.credentials.CredentialsClient;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -10,6 +17,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import dreamteam.pthfndr.R;
 
 public abstract class FirebaseAccessor {
 	/**
@@ -25,27 +34,65 @@ public abstract class FirebaseAccessor {
 	 * The current PthFndr User model
 	 */
 	private static User USER_MODEL;
+	
+	private static FirebaseAuth AUTH_INSTANCE;
+	private static CredentialsClient CREDENTIALS;
+	private static GoogleSignInClient SIGN_IN_CLIENT = null;
 
 	public static void setFireBaseResources() {
+		
+		
 		// get the users 'table' from the DB instance
 		FIREBASE = FIREBASE == null ? FirebaseDatabase.getInstance().getReference().child("users") : FIREBASE;
 
+		// get the current firebase auth instance
+		AUTH_INSTANCE = AUTH_INSTANCE == null ? FirebaseAuth.getInstance() : AUTH_INSTANCE;
+		
 		// get the current firebase auth user
-		AUTH_USER = AUTH_USER == null ? FirebaseAuth.getInstance().getCurrentUser() : AUTH_USER;
+		if (AUTH_INSTANCE != null) {
+			AUTH_USER = AUTH_USER == null ? AUTH_INSTANCE.getCurrentUser() : AUTH_USER;
+		}
 
 		// adds the single value event listener to get the current firebase PthFndr User
 		if (USER_MODEL == null) {
 			getUserModelSnapshot();
 		}
 
-//        LinearLayout content = findViewById(R.id.password_layout);
-//        View v = View.inflate(content.getContext(), mapFragment.getId(), content);
-//        content.updateViewLayout(v, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.);
 	}
 	
+	/**
+	 * Gets the FirebaseUser from the FirebaseAuth framework
+	 * @return The current FirebaseUser
+	 */
 	public static FirebaseUser getAuthUser() {
 		setFireBaseResources();
 		return AUTH_USER;
+	}
+	
+	/**
+	 * This must be set in order to do sign out functions
+	 * @param context The current activity instance
+	 */
+	public static void setSignInClient(Context context) {
+		GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+				.requestIdToken(String.valueOf(R.string.default_web_client_id))
+				.requestEmail()
+				.build();
+		
+		SIGN_IN_CLIENT = GoogleSignIn.getClient(context, signInOptions);
+		CREDENTIALS = Credentials.getClient(context);
+	}
+	
+	/**
+	 * Logs the user out
+	 */
+	public static void logout() {
+		// sign out of google (smart lock)
+		SIGN_IN_CLIENT.signOut();
+		SIGN_IN_CLIENT = null;
+		// sign out of FireBase
+		AUTH_INSTANCE.signOut();
+		CREDENTIALS.disableAutoSignIn();
 	}
 	
 	/**
@@ -105,12 +152,7 @@ public abstract class FirebaseAccessor {
 				}
 			};
 			
-//			if (createUser) {
-//
-//				FIREBASE.push().setValue(firebaseChild, completionListener);
-//			} else {
-				FIREBASE.updateChildren(firebaseChild, completionListener);
-//			}
+			FIREBASE.updateChildren(firebaseChild, completionListener);
 			
 			// set the model, don't wait for the firebase task
 			USER_MODEL = userModel;

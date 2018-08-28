@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -54,23 +55,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
-                menuItem -> {
+                (MenuItem menuItem) -> {
                     menuItem.setChecked(true);
 
                     mDrawerLayout.closeDrawers();
 
                     if (menuItem.getItemId() == R.id.nav_Profile) {
                         Intent newIntent = new Intent(this, ProfileActivity.class);
+                        newIntent.putExtra("user", currentUser);
                         startActivity(newIntent);
                     } else if (menuItem.getItemId() == R.id.nav_SignOut) {
+                        FirebaseAccessor.logout();
                         Intent intent = new Intent(this, SigninActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("user", currentUser);
                         startActivity(intent);
-                    }
-
+                    } else if (menuItem.getItemId() == R.id.nav_Mpgs) {
+                        Intent newIntent = new Intent(this, MpgCalcActivity.class);
+                        newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        newIntent.putExtra("user", currentUser);
+                        startActivity(newIntent);
+                    } else if (menuItem.getItemId() == R.id.nav_History) {
+                        Intent newIntent = new Intent(this, TripHistoryActivity.class);
+                        newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        newIntent.putExtra("user", currentUser);
+                        startActivity(newIntent);
+                    } //else if (menuItem.getItemId() == R.id.nav_Map) {
+//                        Intent newIntent = new Intent(this, MapsActivity.class);
+//                        newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        startActivity(newIntent);
+//                    }
                     return true;
                 });
-
     }//keep here
 
     @Override
@@ -145,6 +161,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }//keep here
+    
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 
     public void signOut(View view) {
         Intent i = new Intent(this, ProfileActivity.class);

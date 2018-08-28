@@ -7,6 +7,7 @@
     <ImageView
         android:id="@+id/imgLogo"
         android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
         android:layout_height="80dp"
         android:contentDescription="@string/logo"
         android:src="@drawable/pth_fndr_logo1png"
@@ -17,6 +18,7 @@
         android:id="@+id/infoGridView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="5dp"
         android:layout_marginStart="5dp"
         android:columnCount="2"
@@ -37,7 +39,7 @@
                 android:id="@+id/lblName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:text="@string/lbl_name"
                 android:textAlignment="textEnd" />
 
@@ -45,7 +47,7 @@
                 android:id="@+id/lblJoinDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:text="@string/lbl_join_date"
                 android:textAlignment="textEnd" />
 
@@ -53,7 +55,7 @@
                 android:id="@+id/lblTripCount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:text="@string/lbl_total_trip_count"
                 android:textAlignment="textEnd" />
 
@@ -61,7 +63,7 @@
                 android:id="@+id/lblTotalTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:text="@string/lbl_time"
                 android:textAlignment="textEnd" />
 
@@ -77,7 +79,7 @@
                 android:id="@+id/lblAverageDistanceOverall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:text="@string/lbl_total_average_distance"
                 android:textAlignment="textEnd" />
 
@@ -85,7 +87,7 @@
                 android:id="@+id/lblMaxSpeedOverall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:text="@string/lbl_max_speed"
                 android:textAlignment="textEnd" />
 
@@ -93,22 +95,22 @@
                 android:id="@+id/lblAverageSpeedOverall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:text="@string/lbl_average_speed"
                 android:textAlignment="textEnd" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnProfileViewTrips"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_columnSpan="2"
-            android:layout_marginEnd="30dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="10dp"
-            android:onClick="viewTripsOnClick"
-            android:text="@string/btn_view_trips"
-            app:layout_constraintTop_toBottomOf="@id/txtAverageSpeedOverall" />
+        <!--<Button-->
+            <!--android:id="@+id/btnProfileViewTrips"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_columnSpan="2"-->
+            <!--android:layout_marginEnd="30dp"-->
+            <!--android:layout_marginStart="30dp"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:onClick="viewTripsOnClick"-->
+            <!--android:text="@string/btn_view_trips"-->
+            <!--app:layout_constraintTop_toBottomOf="@id/txtAverageSpeedOverall" />-->
 
         <!-- Column 2 Stores The Values -->
         <LinearLayout
@@ -122,69 +124,69 @@
                 android:id="@+id/txtName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:layout_marginStart="5dp" />
 
             <TextView
                 android:id="@+id/txtJoinDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:layout_marginStart="5dp" />
 
             <TextView
                 android:id="@+id/txtTotalTrips"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:layout_marginStart="5dp" />
 
             <TextView
                 android:id="@+id/txtTotalTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:layout_marginStart="5dp" />
 
             <TextView
                 android:id="@+id/txtTotalDistance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:layout_marginStart="5dp" />
 
             <TextView
                 android:id="@+id/txtAverageDistance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:layout_marginStart="5dp" />
 
             <TextView
                 android:id="@+id/txtMaxSpeedOverall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:layout_marginStart="5dp" />
 
             <TextView
                 android:id="@+id/txtAverageSpeedOverall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:layout_marginStart="5dp" />
         </LinearLayout>
     </GridLayout>
 
-    <Button
-        android:id="@+id/btnProfileSignOut"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="45dp"
-        android:layout_marginStart="45dp"
-        android:layout_marginTop="5dp"
-        android:onClick="signOutOnClick"
-        android:text="@string/btn_sign_out"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/infoGridView" />
+    <!--<Button-->
+        <!--android:id="@+id/btnProfileSignOut"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginEnd="45dp"-->
+        <!--android:layout_marginStart="45dp"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:onClick="signOutOnClick"-->
+        <!--android:text="@string/btn_sign_out"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@id/infoGridView" />-->
 </android.support.constraint.ConstraintLayout>

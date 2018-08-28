@@ -21,7 +21,7 @@ public class User implements Parcelable {
     private ArrayList<Trip> Trips = new ArrayList<>();
     private double gallonsOfGas;
     private double priceOfFillUp;
-    private String dateOfFillUp;
+    private long dateOfFillUp;
     private double averageMilesPerGallon;
     private double averageCostPerMile;
 
@@ -54,11 +54,11 @@ public class User implements Parcelable {
         this.priceOfFillUp = priceOfFillUp;
     }
 
-    public String getDateOfFillUp() {
+    public long getDateOfFillUp() {
         return dateOfFillUp;
     }
 
-    public void setDateOfFillUp(String date) {
+    public void setDateOfFillUp(long date) {
         this.dateOfFillUp = date;
     }
 

@@ -358,7 +358,7 @@ public class TripHistoryActivity extends AppCompatActivity {
 				android.view.LayoutInflater inflater = context.getLayoutInflater();
 				
 				// inflate the list view row
-				rowView = inflater.inflate(R.layout.trip_view_row, parent);
+				rowView = inflater.inflate(R.layout.trip_view_row, null);
 				
 				// configure view holder - acts as a cache for the view data
 				ViewHolder viewHolder = new ViewHolder();

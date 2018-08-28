@@ -22,6 +22,9 @@
     <string name="logo">pthfndr logo</string>
     <string name="drawer1">Profile</string>
     <string name="drawer2">Sign Out</string>
+    <string name="drawer3">Fuel Info</string>
+    <string name="drawer4">Trip History</string>
+    <string name="drawer5">Map</string>
     <string name="lbl_fill_title">Last Fill Info</string>
     <string name="lbl_fill_date">Date:</string>
     <string name="lbl_fill_qty">Quantity:</string>

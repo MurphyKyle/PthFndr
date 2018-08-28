@@ -33,6 +33,7 @@ public class SigninActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         FirebaseAccessor.setFireBaseResources();
+        FirebaseAccessor.setSignInClient(getApplicationContext());
         super.onCreate(savedInstanceState);
         thisRef = this;
         signIn(null);

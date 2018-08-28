@@ -5,6 +5,26 @@
             android:id="@+id/nav_Profile"
             android:icon="@drawable/map"
             android:title="@string/drawer1" />
+
+        <!--<item-->
+            <!--android:id="@+id/nav_Map"-->
+            <!--android:icon="@drawable/map"-->
+            <!--android:title="@string/drawer5" />-->
+        <item
+            android:id="@+id/nav_Mpgs"
+            android:icon="@drawable/map"
+            android:title="@string/drawer3" />
+        <item
+            android:id="@+id/nav_History"
+            android:icon="@drawable/map"
+            android:title="@string/drawer4" />
+
+        <!--adds a space-->
+        <item
+            android:title=""
+            android:checkable="false"
+            android:enabled="false"/>
+
         <item
             android:id="@+id/nav_SignOut"
             android:icon="@drawable/map"
