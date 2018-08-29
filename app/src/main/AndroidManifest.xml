@@ -12,6 +12,9 @@
         android:roundIcon="@drawable/pth_fndr_logo1png"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".MapsIntentService"
+            android:exported="false"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />

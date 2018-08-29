@@ -21,7 +21,7 @@ import dreamteam.pthfndr.models.Path;
 import dreamteam.pthfndr.models.Trip;
 import dreamteam.pthfndr.models.User;
 
-public class LocServices extends IntentService {
+public class LocServices {
     boolean isActive = false;
     double latitude = 0;
     double longitude = 0;
@@ -96,13 +96,7 @@ public class LocServices extends IntentService {
         }
     };
 
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
-     */
-    public LocServices(String name, User user, GoogleMap m) {
-        super(name);
+    public LocServices(User user, GoogleMap m) {
         currentUser = user;
         mMap = m;
     }
@@ -111,10 +105,6 @@ public class LocServices extends IntentService {
         return locationListener;
     }
 
-    @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
-
-    }
 
     public void NewTrip() {
         trip = new Trip();

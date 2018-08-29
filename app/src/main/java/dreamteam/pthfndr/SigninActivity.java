@@ -1,7 +1,6 @@
 package dreamteam.pthfndr;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -9,19 +8,11 @@ import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import dreamteam.pthfndr.models.FirebaseAccessor;
-import dreamteam.pthfndr.models.MLocation;
-import dreamteam.pthfndr.models.MPolyLine;
-import dreamteam.pthfndr.models.Path;
-import dreamteam.pthfndr.models.Trip;
 import dreamteam.pthfndr.models.User;
 
 public class SigninActivity extends AppCompatActivity {
@@ -40,7 +31,7 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     @Override
-    protected  void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             // i think i'm logged in if i get to this line
@@ -59,6 +50,8 @@ public class SigninActivity extends AppCompatActivity {
                 Intent i = new Intent(this, MapsActivity.class);
                 i.putExtra("user", newUser);
                 startActivity(i);
+                Intent i2 = new Intent(this, MapsIntentService.class);
+                startService(i2);
             } else {
                 try {
                     Toast.makeText(this, response.getError().getErrorCode(), Toast.LENGTH_LONG).show();

@@ -16,7 +16,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -35,8 +34,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static MapsActivity thisRef;
     boolean isActive = false;
     long time = 0;
-    private User currentUser;
-    private GoogleMap mMap;
+    public User currentUser;
+    public GoogleMap mMap;
     private boolean mLocationPermissionGranted;
     private DrawerLayout mDrawerLayout;
     private LocServices ls;
@@ -47,6 +46,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         currentUser = getIntent().getExtras().getParcelable(keys[0]);
 
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_maps);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -93,7 +93,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        ls = new LocServices("locServ", currentUser, mMap);
+
+        ls = new LocServices(currentUser, mMap);
         if (currentUser != null) {
             for (Trip t : currentUser.getTrips()) {
                 for (Path p : t.getPaths()) {

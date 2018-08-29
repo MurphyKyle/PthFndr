@@ -36,6 +36,7 @@
             android:layout_gravity="end|bottom"
             android:scaleType="centerCrop"
             android:src="@drawable/map"
+            android:onClick="manageTrip"
             app:fabSize="normal"
             app:rippleColor="@color/colorAccent"/>
 
