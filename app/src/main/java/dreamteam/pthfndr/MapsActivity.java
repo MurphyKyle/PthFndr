@@ -7,15 +7,20 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.TransactionTooLargeException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -39,56 +44,83 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean mLocationPermissionGranted;
     private DrawerLayout mDrawerLayout;
     private LocServices ls;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        String[] keys = getIntent().getExtras().keySet().toArray(new String[1]);
-        currentUser = getIntent().getExtras().getParcelable(keys[0]);
-
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_maps);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        thisRef = this;
-        currentUser = FirebaseAccessor.getUserModel();
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(
-                (MenuItem menuItem) -> {
-                    menuItem.setChecked(true);
-
-                    mDrawerLayout.closeDrawers();
-
-                    if (menuItem.getItemId() == R.id.nav_Profile) {
-                        Intent newIntent = new Intent(this, ProfileActivity.class);
-                        newIntent.putExtra("user", currentUser);
-                        startActivity(newIntent);
-                    } else if (menuItem.getItemId() == R.id.nav_SignOut) {
-                        FirebaseAccessor.logout();
-                        Intent intent = new Intent(this, SigninActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra("user", currentUser);
-                        startActivity(intent);
-                    } else if (menuItem.getItemId() == R.id.nav_Mpgs) {
-                        Intent newIntent = new Intent(this, MpgCalcActivity.class);
-                        newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        newIntent.putExtra("user", currentUser);
-                        startActivity(newIntent);
-                    } else if (menuItem.getItemId() == R.id.nav_History) {
-                        Intent newIntent = new Intent(this, TripHistoryActivity.class);
-                        newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        newIntent.putExtra("user", currentUser);
-                        startActivity(newIntent);
-                    } //else if (menuItem.getItemId() == R.id.nav_Map) {
-//                        Intent newIntent = new Intent(this, MapsActivity.class);
-//                        newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                        startActivity(newIntent);
-//                    }
-                    return true;
-                });
-    }//keep here
+	private Fragment currentFrag;
+	private RelativeLayout mapLayout;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		String[] keys = getIntent().getExtras().keySet().toArray(new String[1]);
+		currentUser = getIntent().getExtras().getParcelable(keys[0]);
+		
+		if (currentUser == null) {
+			currentUser = FirebaseAccessor.getUserModel();
+		}
+		
+		thisRef = this;
+		setContentView(R.layout.activity_maps);
+		mDrawerLayout = findViewById(R.id.drawer_layout);
+		mapLayout = findViewById(R.id.map_layout);
+		
+		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+		mapFragment.getMapAsync(this);
+		
+		NavigationView navigationView = findViewById(R.id.nav_view);
+		navigationView.setNavigationItemSelectedListener(
+				(MenuItem menuItem) -> {
+					mDrawerLayout.closeDrawers();
+					
+					FragmentManager fragmentManager = getSupportFragmentManager();
+					FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+					Class newFrag = null;
+					
+					switch (menuItem.getItemId()) {
+						case R.id.nav_Profile:
+							newFrag = ProfileFragment.class;
+							break;
+						case R.id.nav_Mpgs:
+							newFrag = MpgCalcFragment.class;
+							break;
+						case R.id.nav_History:
+							newFrag = TripHistoryFragment.class;
+							break;
+						case R.id.nav_Map:
+							removeCurrentFragment();
+							findViewById(R.id.map_layout).setVisibility(View.VISIBLE);
+							break;
+						case R.id.nav_SignOut:
+							removeCurrentFragment();
+							finish();
+							FirebaseAccessor.logout();
+							Intent intent = new Intent(this, SigninActivity.class);
+							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+							intent.putExtra("user", currentUser);
+							startActivity(intent);
+							break;
+					}
+					
+					try {
+						if (newFrag != null) {
+							mapLayout.setVisibility(View.INVISIBLE);
+							currentFrag = (Fragment) newFrag.newInstance();
+							fragmentTransaction.replace(R.id.content_frame, currentFrag, "frag");
+							fragmentTransaction.commit();
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
+					return true;
+				});
+	}//keep here
+	
+	
+	private void removeCurrentFragment() {
+		if (currentFrag != null) {
+			getSupportFragmentManager().beginTransaction().remove(currentFrag).commit();
+			currentFrag = null;
+		}
+	}
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -166,15 +198,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onBackPressed() {
-        moveTaskToBack(true);
+		if (currentFrag == null) {
+			moveTaskToBack(true);
+		} else {
+			removeCurrentFragment();
+			mapLayout.setVisibility(View.VISIBLE);
+		}
     }
-
-    public void signOut(View view) {
-        Intent i = new Intent(this, ProfileActivity.class);
-        User user = getIntent().getExtras().getParcelable("user");
-        i.putExtra("user", user);
-        startActivity(i);
-    }//keep here
 
     public void manageTrip(View view) {
         isActive = !isActive;
@@ -222,7 +252,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (p.getStartLocation() != null && p.getEndLocation() != null) {
                     Polyline l = mMap.addPolyline(new PolylineOptions()
                             .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
-                            .color(p.getPl().getColor())
+                            .color(p.getPl().getColor()) // null polyline? because service isn't ready?
                             .width(p.getPl().getWidth())
                     );
                     if (p.getPl() != null) {

@@ -2,6 +2,7 @@ package dreamteam.pthfndr;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.media.RatingCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
@@ -11,6 +12,8 @@ import com.firebase.ui.auth.IdpResponse;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import dreamteam.pthfndr.models.FirebaseAccessor;
 import dreamteam.pthfndr.models.User;
@@ -38,20 +41,18 @@ public class SigninActivity extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK && data != null) {
                 // try to get the FirebaseAccess user
-                User newUser = null;
-                if (FirebaseAccessor.getUserModel() == null) {
-                    // no current user in the db
-                    newUser = new User();
-                    // create a new user in the pthfndr database
-                    if (FirebaseAccessor.createUserModel(newUser)) {
-                        Toast.makeText(thisRef, "New User Saved!", Toast.LENGTH_LONG).show();
-                    }
-                }
-                Intent i = new Intent(this, MapsActivity.class);
-                i.putExtra("user", newUser);
-                startActivity(i);
-                Intent i2 = new Intent(this, MapsIntentService.class);
-                startService(i2);
+                Timer t = new Timer();
+                Toast.makeText(this, "Logging In!", Toast.LENGTH_LONG).show();
+                t.scheduleAtFixedRate(new TimerTask() {
+	                @Override
+	                public void run() {
+		                if (FirebaseAccessor.gotSnapshot()) {
+		                    runOnUiThread(SigninActivity.this::createOrGetUser);
+		                    this.cancel();
+		                }
+	                }
+                }, 1000, 1000);
+                
             } else {
                 try {
                     Toast.makeText(this, response.getError().getErrorCode(), Toast.LENGTH_LONG).show();
@@ -61,6 +62,24 @@ public class SigninActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+    
+    public void createOrGetUser() {
+	    User theUser = FirebaseAccessor.getUserModel();
+	    // no current user in the db
+	    if (theUser == null) {
+		    theUser = new User();
+		    // create a new user in the pthfndr database
+		    if (FirebaseAccessor.createUserModel(theUser)) {
+			    Toast.makeText(thisRef, "New User Saved!", Toast.LENGTH_LONG).show();
+		    }
+	    }
+	    this.setTheme(R.style.AppTheme);
+	    Intent i2 = new Intent(this, MapsIntentService.class);
+	    startService(i2);
+	    Intent i = new Intent(this, MapsActivity.class);
+	    i.putExtra("user", theUser);
+	    startActivity(i);
     }
 
     public void signIn(View view) {

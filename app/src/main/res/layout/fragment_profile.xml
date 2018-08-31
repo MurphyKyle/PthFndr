@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_margin="20dp"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginTop="30dp"
+        android:contentDescription="@string/logo"
+        android:src="@drawable/pth_fndr_logo1png"
+        android:background="@drawable/element_border"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/labels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgLogo">
+
+            <TextView
+                android:id="@+id/lblName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="@string/lbl_name"
+                android:textAlignment="textEnd" />
+
+            <TextView
+                android:id="@+id/lblJoinDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="@string/lbl_join_date"
+                android:textAlignment="textEnd" />
+
+            <TextView
+                android:id="@+id/lblTripCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="@string/lbl_total_trip_count"
+                android:textAlignment="textEnd" />
+
+            <TextView
+                android:id="@+id/lblTotalTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="@string/lbl_time"
+                android:textAlignment="textEnd" />
+
+            <TextView
+                android:id="@+id/lblTotalDistance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="@string/lbl_total_distance"
+                android:textAlignment="textEnd" />
+
+            <TextView
+                android:id="@+id/lblAverageDistanceOverall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="@string/lbl_total_average_distance"
+                android:textAlignment="textEnd" />
+
+            <TextView
+                android:id="@+id/lblMaxSpeedOverall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="@string/lbl_max_speed"
+                android:textAlignment="textEnd" />
+
+            <TextView
+                android:id="@+id/lblAverageSpeedOverall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="@string/lbl_average_speed"
+                android:textAlignment="textEnd" />
+        </LinearLayout>
+
+        <!-- Column 2 Stores The Values -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:padding="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="20dp"
+            android:orientation="vertical"
+            app:layout_constraintLeft_toRightOf="@id/labels"
+            app:layout_constraintTop_toTopOf="@id/labels">
+
+            <TextView
+                android:id="@+id/txtName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="5dp" />
+
+            <TextView
+                android:id="@+id/txtJoinDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="5dp" />
+
+            <TextView
+                android:id="@+id/txtTotalTrips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="5dp" />
+
+            <TextView
+                android:id="@+id/txtTotalTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="5dp" />
+
+            <TextView
+                android:id="@+id/txtTotalDistance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="5dp" />
+
+            <TextView
+                android:id="@+id/txtAverageDistance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="5dp" />
+
+            <TextView
+                android:id="@+id/txtMaxSpeedOverall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="5dp" />
+
+            <TextView
+                android:id="@+id/txtAverageSpeedOverall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="5dp" />
+        </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

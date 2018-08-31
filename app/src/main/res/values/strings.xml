@@ -27,12 +27,12 @@
     <string name="drawer5">Map</string>
     <string name="lbl_fill_title">Last Fill Info</string>
     <string name="lbl_fill_date">Date:</string>
-    <string name="lbl_fill_qty">Quantity:</string>
+    <string name="lbl_fill_qty">Gallon Qty:</string>
     <string name="lbl_fill_cost">Total Cost:</string>
     <string name="lbl_cost_per_mile">Cost per Mile:</string>
     <string name="lbl_miles_per_gallon">Miles per Gallon:</string>
     <string name="lbl_new_cost">New Total Cost:</string>
-    <string name="lbl_new_qty">New Quantity:</string>
+    <string name="lbl_new_qty">New Gallon Qty:</string>
     <string name="lbl_mid_title">Current Averages</string>
     <string name="btn_update_fill_data">Update Info</string>
 </resources>

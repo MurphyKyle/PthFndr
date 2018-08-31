@@ -7,25 +7,15 @@
     android:fitsSystemWindows="true">
 
     <RelativeLayout
+        android:id="@+id/map_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true" />
-
-        <!--<Button-->
-        <!--android:id="@+id/TripButton"-->
-        <!--android:layout_width="111dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:onClick="manageTrip"-->
-        <!--android:text="@string/startTrip" />-->
+            android:layout_height="match_parent" >
+        </fragment>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/TripButton"
@@ -37,10 +27,16 @@
             android:scaleType="centerCrop"
             android:src="@drawable/map"
             android:onClick="manageTrip"
+            android:text="@string/startTrip"
             app:fabSize="normal"
-            app:rippleColor="@color/colorAccent"/>
-
+            app:rippleColor="@color/colorAccent"
+            />
     </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
@@ -50,8 +46,5 @@
         android:fitsSystemWindows="true"
         android:visibility="invisible"
         app:headerLayout="@layout/header_layout"
-        app:menu="@menu/drawer_view">
-
-    </android.support.design.widget.NavigationView>
-
+        app:menu="@menu/drawer_view"/>
 </android.support.v4.widget.DrawerLayout>

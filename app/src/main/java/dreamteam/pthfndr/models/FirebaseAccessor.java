@@ -34,14 +34,12 @@ public abstract class FirebaseAccessor {
 	 * The current PthFndr User model
 	 */
 	private static User USER_MODEL;
-	
+	private static boolean gotSnapshot = false;
 	private static FirebaseAuth AUTH_INSTANCE;
 	private static CredentialsClient CREDENTIALS;
 	private static GoogleSignInClient SIGN_IN_CLIENT = null;
 
 	public static void setFireBaseResources() {
-		
-		
 		// get the users 'table' from the DB instance
 		FIREBASE = FIREBASE == null ? FirebaseDatabase.getInstance().getReference().child("users") : FIREBASE;
 
@@ -55,9 +53,9 @@ public abstract class FirebaseAccessor {
 
 		// adds the single value event listener to get the current firebase PthFndr User
 		if (USER_MODEL == null) {
+			// model is still null and i need to start a new try series
 			getUserModelSnapshot();
-		}
-
+		} // model not null, hurray!
 	}
 	
 	/**
@@ -93,6 +91,10 @@ public abstract class FirebaseAccessor {
 		// sign out of FireBase
 		AUTH_INSTANCE.signOut();
 		CREDENTIALS.disableAutoSignIn();
+	}
+	
+	public static boolean gotSnapshot() {
+		return gotSnapshot;
 	}
 	
 	/**
@@ -167,6 +169,7 @@ public abstract class FirebaseAccessor {
 			@Override
 			public void onDataChange(DataSnapshot snapshot) {
 				USER_MODEL = snapshot.child(AUTH_USER.getUid()).getValue(dreamteam.pthfndr.models.User.class);
+				gotSnapshot = true;
 			}
 
 			@Override

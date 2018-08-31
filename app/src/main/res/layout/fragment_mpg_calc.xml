@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp">
+
+    <!--top section labels-->
+    <TextView
+        android:id="@+id/lbl_top_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/lbl_fill_title"
+        android:textSize="30sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/lbl_date"
+        style="@style/MpgStyle"
+        android:layout_marginTop="10dp"
+        android:text="@string/lbl_fill_date"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lbl_top_title" />
+
+    <TextView
+        android:id="@+id/lbl_cost"
+        style="@style/MpgStyle"
+        android:text="@string/lbl_fill_cost"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lbl_date" />
+
+    <TextView
+        android:id="@+id/lbl_qty"
+        style="@style/MpgStyle"
+        android:text="@string/lbl_fill_qty"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lbl_cost" />
+
+    <!--top section data-->
+    <TextView
+        android:id="@+id/lbl_date_data"
+        style="@style/MpgStyle"
+        android:layout_width="180dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintLeft_toRightOf="@id/lbl_date"
+        app:layout_constraintTop_toBottomOf="@id/lbl_top_title" />
+
+    <TextView
+        android:id="@+id/lbl_cost_data"
+        style="@style/MpgStyle"
+        android:layout_width="160dp"
+        android:layout_marginStart="20dp"
+        app:layout_constraintLeft_toRightOf="@id/lbl_cost"
+        app:layout_constraintTop_toBottomOf="@id/lbl_date_data" />
+
+    <TextView
+        android:id="@+id/lbl_qty_data"
+        style="@style/MpgStyle"
+        android:layout_width="160dp"
+        android:layout_marginStart="20dp"
+        app:layout_constraintLeft_toRightOf="@id/lbl_qty"
+        app:layout_constraintTop_toBottomOf="@id/lbl_cost_data" />
+
+    <!--mid section labels-->
+    <TextView
+        android:id="@+id/lbl_mid_title"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="@string/lbl_mid_title"
+        android:textSize="30sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lbl_qty" />
+
+    <TextView
+        android:id="@+id/lbl_mile_per_gallon"
+        style="@style/MpgStyle"
+        android:layout_marginTop="20dp"
+        android:text="@string/lbl_miles_per_gallon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lbl_mid_title" />
+
+    <TextView
+        android:id="@+id/lbl_cost_per_mile"
+        style="@style/MpgStyle"
+        android:text="@string/lbl_cost_per_mile"
+        app:layout_constraintTop_toBottomOf="@id/lbl_mile_per_gallon" />
+
+    <!--mid section data-->
+    <TextView
+        android:id="@+id/lbl_miles_per_gallon_data"
+        style="@style/MpgStyle"
+        android:layout_width="160dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintLeft_toRightOf="@id/lbl_mile_per_gallon"
+        app:layout_constraintTop_toBottomOf="@id/lbl_mid_title" />
+
+    <TextView
+        android:id="@+id/lbl_cost_per_mile_data"
+        style="@style/MpgStyle"
+        android:layout_width="160dp"
+        android:layout_marginStart="20dp"
+        app:layout_constraintLeft_toRightOf="@id/lbl_cost_per_mile"
+        app:layout_constraintTop_toBottomOf="@id/lbl_miles_per_gallon_data" />
+
+    <!--bottom section labels-->
+    <!--setters to update fill data-->
+    <TextView
+        android:id="@+id/lbl_new_cost"
+        style="@style/MpgStyle"
+        android:layout_marginTop="70dp"
+        android:text="@string/lbl_new_cost"
+        app:layout_constraintTop_toBottomOf="@id/lbl_cost_per_mile" />
+
+    <TextView
+        android:id="@+id/lbl_new_qty"
+        style="@style/MpgStyle"
+        android:layout_marginTop="15dp"
+        android:text="@string/lbl_new_qty"
+        app:layout_constraintTop_toBottomOf="@id/lbl_new_cost" />
+
+    <!--bottom section data-->
+    <EditText
+        android:id="@+id/txt_new_cost"
+        style="@style/MpgStyle"
+        android:layout_width="160dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="65dp"
+        android:inputType="numberDecimal"
+        android:textAlignment="center"
+        app:layout_constraintLeft_toRightOf="@id/lbl_new_cost"
+        app:layout_constraintTop_toBottomOf="@id/lbl_cost_per_mile_data" />
+
+    <EditText
+        android:id="@+id/txt_new_qty"
+        style="@style/MpgStyle"
+        android:layout_width="160dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="20dp"
+        android:inputType="numberDecimal"
+        android:textAlignment="center"
+        app:layout_constraintLeft_toRightOf="@id/lbl_new_qty"
+        app:layout_constraintTop_toBottomOf="@id/txt_new_cost" />
+
+    <Button
+        android:id="@+id/btn_update_fill_data"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:background="#3A3"
+        android:onClick="btnUpdateOnClick"
+        android:text="@string/btn_update_fill_data"
+        android:textSize="21sp"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</android.support.constraint.ConstraintLayout>
