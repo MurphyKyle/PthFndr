@@ -84,7 +84,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 						case R.id.nav_History:
 							newFrag = TripHistoryFragment.class;
 							break;
-						case R.id.nav_Map:
+						case R.id.map_layout:
+
 							removeCurrentFragment();
 							findViewById(R.id.map_layout).setVisibility(View.VISIBLE);
 							break;
@@ -132,12 +133,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (Path p : t.getPaths()) {
                     Polyline l = mMap.addPolyline(new PolylineOptions()
                             .add(new LatLng(p.getEndLocation().getLatitude(), p.getEndLocation().getLongitude()), new LatLng(p.getStartLocation().getLatitude(), p.getStartLocation().getLongitude()))
-                            .color(p.getColor())
+
                     );
                     if (p.getPl() != null) {
                         l.setWidth(p.getPl().getWidth());
+                        l.setColor(p.getPl().getColor());
                     } else {
                         l.setWidth(5);
+                        l.setColor(Color.BLACK);
                     }
                 }
             }

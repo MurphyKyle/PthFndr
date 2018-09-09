@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.provider.CalendarContract;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
@@ -18,8 +19,7 @@ public class MPolyLine implements Parcelable {
     private int color;
     private int width = 5;
 
-    public MPolyLine() {
-    }
+
 
     public MPolyLine(double startLong, double startLat, double endLong, double endLat, int c, int w) {
         startingLongitude = startLong;
@@ -29,6 +29,8 @@ public class MPolyLine implements Parcelable {
         color = c;
         width = w;
     }
+
+    public MPolyLine() {}
 
     private MPolyLine(Parcel in) {
         startingLongitude = in.readDouble();

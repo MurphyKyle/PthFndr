@@ -11,13 +11,13 @@ import com.google.firebase.database.IgnoreExtraProperties;
 public class Path implements Parcelable {
     
     private MPolyLine pl;
+
     private int color;
     private int seconds;
     private MLocation endLocation;
     private MLocation startLocation;
 
-    public Path() {
-    }
+    public Path() {}
 
     public Path(MLocation sl, MLocation el, MPolyLine p, int c, int timePassed) {
         setStartLocation(sl);
@@ -55,7 +55,7 @@ public class Path implements Parcelable {
         this.endLocation = endLocation;
     }
 
-    @Exclude
+
     public MPolyLine getPl() {
         return pl;
     }
