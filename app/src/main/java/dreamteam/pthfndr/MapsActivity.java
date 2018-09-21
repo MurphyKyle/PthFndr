@@ -84,8 +84,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 						case R.id.nav_History:
 							newFrag = TripHistoryFragment.class;
 							break;
-//						case R.id.nav_Map:
-						case R.id.map_layout:
+						case R.id.nav_Map:
+//						case R.id.map_layout:
 							removeCurrentFragment();
 							mapLayout.setVisibility(View.VISIBLE);
 //							findViewById(R.id.map_layout).setVisibility(View.VISIBLE);
