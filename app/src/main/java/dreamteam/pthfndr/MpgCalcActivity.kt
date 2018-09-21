@@ -34,12 +34,12 @@ class MpgCalcActivity : AppCompatActivity() {
         setContentView(R.layout.activity_mpg_calc)
 
         val keys = intent.extras!!.keySet().toTypedArray()
-        currentUser = intent.extras!!.getParcelable<User>(keys[0])
+        currentUser = intent.extras!!.getParcelable(keys[0])!!
 
         if (intent.extras != null) {
             val key = intent.extras!!.keySet().elementAt(0)
             // ..get the user - we should only get the user's data into the activity, nothing else
-            user = intent.extras!!.getParcelable<User>(key)
+            user = intent.extras!!.getParcelable(key)!!
 
             // set text views
             dateBox = findViewById(R.id.lbl_date_data)

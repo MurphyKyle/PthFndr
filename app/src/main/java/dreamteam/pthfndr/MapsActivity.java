@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.TransactionTooLargeException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -65,6 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mapFragment.getMapAsync(this);
 		
+		
 		NavigationView navigationView = findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(
 				(MenuItem menuItem) -> {
@@ -84,10 +84,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 						case R.id.nav_History:
 							newFrag = TripHistoryFragment.class;
 							break;
+//						case R.id.nav_Map:
 						case R.id.map_layout:
-
 							removeCurrentFragment();
-							findViewById(R.id.map_layout).setVisibility(View.VISIBLE);
+							mapLayout.setVisibility(View.VISIBLE);
+//							findViewById(R.id.map_layout).setVisibility(View.VISIBLE);
 							break;
 						case R.id.nav_SignOut:
 							removeCurrentFragment();

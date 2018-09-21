@@ -24,9 +24,10 @@ public class SplashActivity extends AppCompatActivity {
 		t.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
-				runOnUiThread(SplashActivity.this::toast);
+//				runOnUiThread(SplashActivity.this::toast);
 				if (FirebaseAccessor.getUserModel() != null) {
 					startActivity(new Intent(SplashActivity.this, SigninActivity.class));
+					this.cancel(); //
 					finish();
 				}
 			}
@@ -34,6 +35,8 @@ public class SplashActivity extends AppCompatActivity {
 	}
 	
 	private void toast() {
-		Toast.makeText(this, "Checking user.. try# " + i++, Toast.LENGTH_SHORT).show();
+		if (this != null && !this.isFinishing()) {
+			Toast.makeText(this, "Finding user...  " + i++, Toast.LENGTH_SHORT).show();
+		}
 	}
 }

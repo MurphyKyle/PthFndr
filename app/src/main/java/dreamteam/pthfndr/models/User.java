@@ -19,11 +19,11 @@ public class User implements Parcelable {
     private String UID = "no uid";
     private String Name = DEFAULT_NAME;
     private ArrayList<Trip> Trips = new ArrayList<>();
-    private double gallonsOfGas;
-    private double priceOfFillUp;
+    private double gallonsOfGas = 0.0;
+    private double priceOfFillUp = 0.0;
     private long dateOfFillUp;
-    private double averageMilesPerGallon;
-    private double averageCostPerMile;
+    private double averageMilesPerGallon = 0.0;
+    private double averageCostPerMile = 0.0;
 
     public User() { }
 
@@ -111,6 +111,10 @@ public class User implements Parcelable {
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("Name", Name);
+        result.put("MPG", averageMilesPerGallon);
+        result.put("CPM", averageCostPerMile);
+        result.put("GallonQty", gallonsOfGas);
+        result.put("FillPrice", priceOfFillUp);
         result.put("Trips", Trips);
         return result;
     }
